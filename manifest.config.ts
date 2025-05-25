@@ -8,15 +8,15 @@ export default defineManifest(() => ({
   action: {
     default_popup: "index.html",
   },
-  // content_scripts: [
-  //   {
-  //     matches: ["<all_urls>"],
-  //     js: ["src/contentScript.js"],
-  //     run_at: "document_idle",
-  //   },
-  // ],
-  // background: {
-  //   service_worker: "src/background.js",
-  // },
+  content_scripts: [
+    {
+      matches: ["<all_urls>"],
+      js: ["src/contentScript/contentScript.tsx"],
+      run_at: "document_idle",
+    },
+  ],
+  background: {
+    service_worker: "src/background/background.js",
+  },
   host_permissions: ["<all_urls>"],
 }));

@@ -3,8 +3,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
+import { useState } from "react";
+import { handleApiKeySave } from "@/lib/utils";
 
 export default function Popup() {
+  const [keyValue, setKeyValue] = useState<string>("");
+
   return (
     <div className="h-[600px] w-[400px] bg-gradient-to-b from-black to-slate-900 text-white overflow-y-auto">
       {/* Header */}
@@ -36,8 +40,13 @@ export default function Popup() {
                 type="password"
                 placeholder="Enter your Chat-GPT API key"
                 className="bg-slate-800/70 border-gray-700 focus:border-cyan-500 text-white placeholder:text-gray-500 text-sm h-8 pr-8"
+                value={keyValue}
+                onChange={(e) => setKeyValue(e.target.value)}
               />
-              <Button className="bg-cyan-600 hover:bg-cyan-700 whitespace-nowrap h-8 text-xs px-2">
+              <Button
+                className="bg-cyan-600 hover:bg-cyan-700 whitespace-nowrap h-8 text-xs px-2"
+                onClick={() => handleApiKeySave(keyValue)}
+              >
                 Save
               </Button>
             </div>
