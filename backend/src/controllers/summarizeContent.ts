@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { fetchDOMWithPuppeteer } from "../utils/puppeteer/fetchDOM";
 import { parseDOMWithReadability } from "../utils/readability";
+import { llmSummarize } from "../llm/aiClient";
 
 export const summarizeContent = async (req: Request, res: Response) => {
 	try {
@@ -13,13 +14,13 @@ export const summarizeContent = async (req: Request, res: Response) => {
 		const domString = await fetchDOMWithPuppeteer(url);
 		const parseDom = parseDOMWithReadability(domString);
 
-		/* 
-        Request to summarize the prased data :
-            - attach a prompt for better reponse
-            -
-        */
+		const responseAISummarize = await llmSummarize(parseDom?.textContent ?? "");
 
-		res.status(201).json({ data: req.body, content: parseDom });
+		res.status(201).json({
+			data: req.body,
+			parsedContent: parseDom,
+			summarizedContent: responseAISummarize,
+		});
 	} catch (err) {
 		console.error("Failed to fetch DOM:", err);
 		res.status(500).json({ error: "Failed to fetch DOM" });
