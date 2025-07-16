@@ -17,10 +17,8 @@ export default defineManifest(() => ({
 			run_at: "document_idle",
 		},
 	],
-	background: {
-		service_worker: "src/background/background.js",
-	},
-	host_permissions: [
-		"https://medium.com/blog/how-to-find-a-publication-on-medium-59527f6b7a77",
-	],
+	// background: {
+	// 	service_worker: "src/background/background.tsx",
+	// },
+	host_permissions: ["<all_urls>"],
 }));
