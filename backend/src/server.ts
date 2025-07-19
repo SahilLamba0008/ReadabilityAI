@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import summarizeRoutes from "./routes/summarizeRoutes";
+import summarizeRoutes from "./routes/summarize-routes";
 
 dotenv.config();
 

@@ -13,7 +13,7 @@ export default defineManifest(() => ({
 			matches: [
 				"https://medium.com/blog/how-to-find-a-publication-on-medium-59527f6b7a77",
 			],
-			js: ["src/contentScript/contentScript.js"],
+			js: ["src/content-script/ContentScript.js"],
 			run_at: "document_idle",
 		},
 	],

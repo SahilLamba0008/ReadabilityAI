@@ -1,24 +1,15 @@
-import HighlighterTool from "@/components/HighlighterTool/highlighter";
-import PenTool from "@/components/PenTool/pen";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import HighlighterTool from "@/components/HighlighterTool";
+import PenTool from "@/components/PenTool";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 
 export default function Popup() {
 	return (
-		<div className="h-[500px] w-[400px] bg-gradient-to-b from-black to-slate-900 text-white overflow-y-auto">
-			{/* Header */}
-			<div className="p-4 border-b border-gray-800">
-				<div className="flex items-center gap-2 justify-center">
-					<Sparkles className="h-5 w-5 text-cyan-400" />
-					<h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-500 to-cyan-400">
-						Readability AI
-					</h1>
-				</div>
-				<p className="text-xs text-gray-400 text-center mt-1">
-					Transform complex content into quick reader-friendly bullet points
-				</p>
-			</div>
+		<div className="h-[500px] w-[400px] bg-gradient-to-br from-black via-gray-950 to-black text-white">
+			<Header />
 			<div className="p-4 flex flex-col gap-4">
 				<Card className="bg-slate-900/60 border border-gray-800 backdrop-blur-sm p-4 rounded-xl shadow-lg">
 					<div className="mb-4">
@@ -36,6 +27,7 @@ export default function Popup() {
 					</Button>
 				</Card>
 			</div>
+			<Footer />
 		</div>
 	);
 }

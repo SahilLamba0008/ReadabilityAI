@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
-import SYSTEM_PROMPTS from "./prompts";
 import dotenv from "dotenv";
+import { SYSTEM_PROMPTS } from "./prompts";
 
 dotenv.config();
 
