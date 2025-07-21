@@ -2,9 +2,8 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import HighlighterTool from "@/components/HighlighterTool";
 import PenTool from "@/components/PenTool";
-import { Button } from "@/components/ui/button";
+import SummarizeButton from "@/components/SummarizeButton";
 import { Card } from "@/components/ui/card";
-import { Sparkles } from "lucide-react";
 
 export default function Popup() {
 	return (
@@ -31,10 +30,7 @@ export default function Popup() {
 					<h2 className="text-sm text-card-foreground font-semibold mb-2 flex items-center">
 						AI Assistant
 					</h2>
-					<Button className="bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-ring px-4 py-2 text-sm rounded-lg flex items-center gap-1 w-full justify-center">
-						<Sparkles className="h-4 w-4" />
-						Summarize
-					</Button>
+					<SummarizeButton />
 				</Card>
 			</div>
 			<Footer />

@@ -10,15 +10,13 @@ export default defineManifest(() => ({
 	},
 	content_scripts: [
 		{
-			matches: [
-				"https://medium.com/blog/how-to-find-a-publication-on-medium-59527f6b7a77",
-			],
+			matches: ["https://medium.com/blog/*"],
 			js: ["src/content-script/ContentScript.js"],
 			run_at: "document_idle",
 		},
 	],
-	// background: {
-	// 	service_worker: "src/background/background.tsx",
-	// },
-	host_permissions: ["<all_urls>"],
+	background: {
+		service_worker: "src/background/Background.js",
+	},
+	host_permissions: ["http://*/*", "https://*/*"],
 }));
