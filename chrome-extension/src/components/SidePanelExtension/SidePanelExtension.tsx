@@ -1,11 +1,11 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import HighlighterTool from "@/components/HighlighterTool";
-import PenTool from "@/components/PenTool";
-import SummarizeButton from "@/components/SummarizeButton";
-import { Card } from "@/components/ui/card";
+import { PenTool } from "lucide-react";
+import Header from "../Header";
+import { Card } from "../ui/card";
+import HighlighterTool from "../HighlighterTool";
+import SummarizeButton from "../SummarizeButton";
+import Footer from "../Footer";
 
-export default function Popup() {
+const SidePanelExtension = () => {
 	return (
 		<div className="h-[500px] w-[400px] bg-background">
 			<Header />
@@ -36,4 +36,6 @@ export default function Popup() {
 			<Footer />
 		</div>
 	);
-}
+};
+
+export default SidePanelExtension;

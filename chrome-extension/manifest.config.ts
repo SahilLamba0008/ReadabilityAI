@@ -10,7 +10,7 @@ export default defineManifest(() => ({
 	},
 	content_scripts: [
 		{
-			matches: ["https://medium.com/blog/*"],
+			matches: ["https://medium.com/*/*"],
 			js: ["src/content-script/ContentScript.js"],
 			run_at: "document_idle",
 		},
