@@ -1,4 +1,8 @@
-import { BookOpen, Sun, User } from "lucide-react";
+import {
+	BookOpen,
+	Sun,
+	// User
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -15,7 +19,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { dropdownMenuItems } from "@/lib/constants";
+// import { dropdownMenuItems } from "@/lib/constants";
 
 const Header = () => {
 	return (

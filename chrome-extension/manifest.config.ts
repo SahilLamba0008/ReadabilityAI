@@ -11,12 +11,12 @@ export default defineManifest(() => ({
 	content_scripts: [
 		{
 			matches: ["https://medium.com/*/*"],
-			js: ["src/content-script/ContentScript.js"],
+			js: ["src/content/content.ts"],
 			run_at: "document_idle",
 		},
 	],
 	background: {
-		service_worker: "src/background/Background.js",
+		service_worker: "src/background/background.ts",
 	},
 	host_permissions: ["http://*/*", "https://*/*"],
 }));
