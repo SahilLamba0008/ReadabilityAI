@@ -7,11 +7,12 @@ export default defineManifest(() => ({
 	permissions: ["scripting", "activeTab", "tabs"],
 	action: {
 		default_popup: "index.html",
+		default_title: "Readability AI",
 	},
 	content_scripts: [
 		{
 			matches: ["https://medium.com/*/*"],
-			js: ["src/content/content.ts"],
+			js: ["src/content/content.tsx"],
 			run_at: "document_idle",
 		},
 	],
