@@ -16,5 +16,11 @@ export default defineConfig({
 	}),
 	manifest: {
 		permissions: ["storage"],
+		web_accessible_resources: [
+			{
+				resources: ["sidepanel.html"],
+				matches: ["<all_urls>"],
+			},
+		],
 	},
 });
