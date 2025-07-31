@@ -1,25 +1,15 @@
 import { useState } from "react";
 import "~/assets/global.css";
 import { Button } from "@/components/ui/button";
+import Header from "@/components/Header";
 
 function App() {
 	const [count, setCount] = useState(0);
 
 	return (
-		<>
-			<h1>WXT + React</h1>
-			<div className="card">
-				<Button onClick={() => setCount((count) => count + 1)}>
-					count is {count}
-				</Button>
-				<p>
-					Edit <code>src/entrypoints/popup/App.tsx</code> and save to test HMR
-				</p>
-			</div>
-			<p className="read-the-docs">
-				Click on the WXT and React logos to learn more
-			</p>
-		</>
+		<div className="w-[350px] h-[400px] flex flex-col">
+			<Header />
+		</div>
 	);
 }
 
