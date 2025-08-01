@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import HighlighterTool from "@/components/HighlighterTool";
+import Highlights from "@/components/Highlights";
 import PenTool from "@/components/PenTool";
 import SummarizeButton from "@/components/SummarizeButton";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 							Repaint Strokes
 						</Button>
 					</div>
+
+					{/* Highlighted content card */}
+					<Highlights />
 				</div>
 			</div>
 			<Footer />
