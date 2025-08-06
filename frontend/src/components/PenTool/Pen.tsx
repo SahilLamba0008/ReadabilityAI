@@ -18,6 +18,12 @@ const PenTool = () => {
 
 	const [selectedPenColor, setSelectedPenColor] = useState("#F3F4F6");
 
+	useEffect(() => {
+		browser.runtime.sendMessage({
+			type: penEnabled ? "penToolEnabled" : "penToolDisabled",
+		});
+	}, [penEnabled, selectedPenColor]);
+
 	return (
 		<div className="space-y-3">
 			<div className="flex items-center justify-between">
