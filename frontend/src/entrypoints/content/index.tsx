@@ -1,5 +1,12 @@
 import { ContentScriptContext } from "#imports";
-import { disablePenTool, enablePenTool } from "@/components/PenTool";
+import {
+	disablePenTool,
+	enablePenTool,
+	clearPenToolStrokes,
+	redoPenToolStroke,
+	undoPenToolStroke,
+	updatePenToolColor
+} from "@/components/PenTool";
 import "~/assets/global.css";
 
 export default defineContentScript({
@@ -11,10 +18,19 @@ export default defineContentScript({
 		console.log("Content script initialized for Medium and LeetCode");
 
 		browser.runtime.onMessage.addListener((message) => {
+			console.log("Content script received message:", message);
 			if (message.type === "penToolEnabled") {
-				enablePenTool(message, ctx); // Inject canvas or iframe
+				enablePenTool();
 			} else if (message.type === "penToolDisabled") {
-				disablePenTool(message, ctx); // Cleanup
+				disablePenTool();
+			} else if (message.type === "undo") {
+				undoPenToolStroke();
+			} else if (message.type === "redo") {
+				redoPenToolStroke();
+			} else if (message.type === "clearPenTool") {
+				clearPenToolStrokes();
+			} else if (message.type === "updatePenColor" && message.color) {
+				updatePenToolColor(message.color);
 			}
 		});
 	},
