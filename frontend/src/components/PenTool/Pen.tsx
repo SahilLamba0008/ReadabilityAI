@@ -12,13 +12,14 @@ let penTool: PenToolCanvas | null = null;
 
 export const enablePenTool = () => {
 	console.log("Enabling pen tool with message:");
-	penTool = new PenToolCanvas({ color: "red" });
+	if (!penTool) {
+		penTool = new PenToolCanvas({ color: "red" });
+	}
 	penTool.enable();
 };
 
 export const disablePenTool = () => {
 	penTool?.disable();
-	penTool = null;
 	console.log("Disabling pen tool with message:");
 };
 
@@ -35,6 +36,7 @@ export const redoPenToolStroke = () => {
 export const clearPenToolStrokes = () => {
 	console.log("Clearing pen tool strokes");
 	penTool?.clear();
+	penTool = null;
 };
 
 export const updatePenToolColor = (color: string) => {
@@ -128,7 +130,7 @@ const PenTool = () => {
 								</Button>
 							</TooltipTrigger>
 							<TooltipContent className={"text-gray-100"}>
-								<p>Undo (Ctrl+Z)</p>
+								<p>Undo</p>
 							</TooltipContent>
 						</Tooltip>
 
@@ -144,7 +146,7 @@ const PenTool = () => {
 								</Button>
 							</TooltipTrigger>
 							<TooltipContent>
-								<p>Redo (Ctrl+Y)</p>
+								<p>Redo</p>
 							</TooltipContent>
 						</Tooltip>
 
@@ -160,7 +162,7 @@ const PenTool = () => {
 								</Button>
 							</TooltipTrigger>
 							<TooltipContent>
-								<p>Delete all strokes (Ctrl+Del)</p>
+								<p>Clear all strokes</p>
 							</TooltipContent>
 						</Tooltip>
 					</div>

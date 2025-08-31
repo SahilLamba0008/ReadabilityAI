@@ -31,8 +31,9 @@ export class PenToolCanvas {
 	}
 
 	public enable() {
-		if (this.canvas) {
-			console.log("Pen tool is already enabled");
+		if (this.canvas !== null) {
+			this.addEventListeners();
+			this.canvas.style.cursor = "crosshair";
 			return;
 		}
 		this.canvas = document.createElement("canvas");
@@ -61,17 +62,15 @@ export class PenToolCanvas {
 		this.ctx.strokeStyle = this.options.color!;
 		this.ctx.lineWidth = this.options.lineWidth!;
 		this.ctx.lineCap = this.options.lineCap!;
-		console.log("Pen tool enabled");
 	}
 
 	public disable() {
+		// Note: We do not clear the canvas or strokes here to allow undo/redo after re-enabling
 		this.removeEventListeners();
 		if (this.canvas) {
-			this.canvas.remove();
+			this.canvas.style.cursor = "default";
 		}
-
 		this.drawing = false;
-		console.log("Pen tool disabled");
 	}
 
 	private addEventListeners() {
