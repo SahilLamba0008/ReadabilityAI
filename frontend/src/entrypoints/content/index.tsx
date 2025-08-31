@@ -5,8 +5,9 @@ import {
 	clearPenToolStrokes,
 	redoPenToolStroke,
 	undoPenToolStroke,
-	updatePenToolColor
+	updatePenToolColor,
 } from "@/components/PenTool";
+import { ToolCommandMessage } from "@/lib/types";
 import "~/assets/global.css";
 
 export default defineContentScript({
@@ -17,20 +18,30 @@ export default defineContentScript({
 		await initializeSidePanel(ctx);
 		console.log("Content script initialized for Medium and LeetCode");
 
-		browser.runtime.onMessage.addListener((message) => {
+		browser.runtime.onMessage.addListener((message: ToolCommandMessage) => {
 			console.log("Content script received message:", message);
-			if (message.type === "penToolEnabled") {
-				enablePenTool();
-			} else if (message.type === "penToolDisabled") {
-				disablePenTool();
-			} else if (message.type === "undo") {
-				undoPenToolStroke();
-			} else if (message.type === "redo") {
-				redoPenToolStroke();
-			} else if (message.type === "clearPenTool") {
-				clearPenToolStrokes();
-			} else if (message.type === "updatePenColor" && message.color) {
-				updatePenToolColor(message.color);
+
+			if (message.tool === "pen") {
+				switch (message.action) {
+					case "enable":
+						enablePenTool();
+						break;
+					case "disable":
+						disablePenTool();
+						break;
+					case "undo":
+						undoPenToolStroke();
+						break;
+					case "redo":
+						redoPenToolStroke();
+						break;
+					case "clear":
+						clearPenToolStrokes();
+						break;
+					case "updateColor":
+						updatePenToolColor(message.payload.color);
+						break;
+				}
 			}
 		});
 	},

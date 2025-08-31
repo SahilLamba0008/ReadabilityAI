@@ -48,37 +48,42 @@ export const updatePenToolColor = (color: string) => {
 
 const PenTool = () => {
 	const [penEnabled, setPenEnabled] = useState(false);
-	const penColors = [
-		"red", // Light Gray - polite alternative to black
-		"blue", // Very Light Yellow - polite alternative to white
-		"yellow", // Light Red - polite alternative to red
-		"green", // Light Blue - same as highlighter for consistency
-	];
+	const penColors = ["red", "blue", "yellow", "green"];
 
-	const [selectedPenColor, setSelectedPenColor] = useState("red");
+	const [selectedPenColor, setSelectedPenColor] = useState(penColors[0]);
 
 	useEffect(() => {
 		browser.runtime.sendMessage({
-			type: penEnabled ? "penToolEnabled" : "penToolDisabled",
+			tool: "pen",
+			action: penEnabled ? "enable" : "disable",
 		});
 	}, [penEnabled]);
 
 	useEffect(() => {
 		if (penEnabled) {
 			browser.runtime.sendMessage({
-				type: "updatePenColor",
-				color: selectedPenColor,
+				tool: "pen",
+				action: "updateColor",
+				payload: {
+					color: selectedPenColor,
+				},
 			});
 		}
-	}, [selectedPenColor]);
+	}, [selectedPenColor, penEnabled]);
 
-	function sendUndoRedoMessage(type: "undo" | "redo") {
-		console.log(`Sending ${type} message`);
-		browser.runtime.sendMessage({ type });
+	function sendUndoRedoMessage(action: "undo" | "redo") {
+		console.log(`Sending ${action} message`);
+		browser.runtime.sendMessage({
+			tool: "pen",
+			action,
+		});
 	}
 
 	function sendClearMessage() {
-		browser.runtime.sendMessage({ type: "clearPenTool" });
+		browser.runtime.sendMessage({
+			tool: "pen",
+			action: "clear",
+		});
 	}
 
 	return (
@@ -155,7 +160,7 @@ const PenTool = () => {
 								</Button>
 							</TooltipTrigger>
 							<TooltipContent>
-								<p>Delete all highlights and strokes</p>
+								<p>Delete all strokes (Ctrl+Del)</p>
 							</TooltipContent>
 						</Tooltip>
 					</div>
