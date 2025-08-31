@@ -66,6 +66,7 @@ export class PenToolCanvas {
 
 	public disable() {
 		// Note: We do not clear the canvas or strokes here to allow undo/redo after re-enabling
+		console.log("Disabling pen tool");
 		this.removeEventListeners();
 		if (this.canvas) {
 			this.canvas.style.cursor = "default";

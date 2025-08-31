@@ -6,6 +6,42 @@ import {
 	TooltipTrigger,
 	TooltipContent,
 } from "@/components/ui/tooltip";
+import { HighlighterToolService } from "./HighlighterTool";
+
+let highlighterTool: HighlighterToolService | null =
+	new HighlighterToolService();
+
+export const enableHighlighterTool = () => {
+	console.log("Enabling highlighter tool with message:");
+	highlighterTool?.enable();
+};
+
+export const disableHighlighterTool = () => {
+	highlighterTool?.disable();
+	console.log("Disabling highlighter tool with message:");
+};
+
+export const UpdateHighlighterToolColor = (color: string) => {
+	if (highlighterTool) {
+		highlighterTool.setColor(color);
+	}
+	console.log("Updated highlighter tool color to:", color);
+};
+
+export const UndoHighlighterToolStroke = () => {
+	console.log("Undoing highlighter tool stroke");
+	highlighterTool?.undo();
+};
+export const RedoHighlighterToolStroke = () => {
+	console.log("Redoing highlighter tool stroke");
+	highlighterTool?.redo();
+};
+
+export const ClearHighlighterToolStrokes = () => {
+	console.log("Clearing highlighter tool strokes");
+	highlighterTool?.clearAll();
+	highlighterTool = new HighlighterToolService();
+};
 
 const HighlighterTool = () => {
 	const [highlighterEnabled, setHighlighterEnabled] = useState(false);
@@ -17,6 +53,40 @@ const HighlighterTool = () => {
 		"#DBEAFE", // Light Blue - good contrast
 		"#FCE7F3", // Light Pink - accessible
 	];
+
+	useEffect(() => {
+		browser.runtime.sendMessage({
+			tool: "highlighter",
+			action: highlighterEnabled ? "enable" : "disable",
+		});
+	}, [highlighterEnabled]);
+
+	useEffect(() => {
+		if (highlighterEnabled) {
+			browser.runtime.sendMessage({
+				tool: "highlighter",
+				action: "updateColor",
+				payload: {
+					color: selectedHighlighterColor,
+				},
+			});
+		}
+	}, [selectedHighlighterColor, highlighterEnabled]);
+
+	function sendUndoRedoMessage(action: "undo" | "redo") {
+		console.log(`Sending ${action} message`);
+		browser.runtime.sendMessage({
+			tool: "highlighter",
+			action,
+		});
+	}
+
+	function sendClearMessage() {
+		browser.runtime.sendMessage({
+			tool: "highlighter",
+			action: "clear",
+		});
+	}
 
 	return (
 		<div className="space-y-3">
@@ -57,12 +127,13 @@ const HighlighterTool = () => {
 									variant="outline"
 									size="sm"
 									className={"w-8 h-8 p-0 bg-transparent"}
+									onClick={() => sendUndoRedoMessage("undo")}
 								>
 									<Undo2 className="w-3 h-3" />
 								</Button>
 							</TooltipTrigger>
 							<TooltipContent>
-								<p>Undo (Ctrl+Z)</p>
+								<p>Undo</p>
 							</TooltipContent>
 						</Tooltip>
 
@@ -72,12 +143,13 @@ const HighlighterTool = () => {
 									variant="outline"
 									size="sm"
 									className={"w-8 h-8 p-0 bg-transparent"}
+									onClick={() => sendUndoRedoMessage("redo")}
 								>
 									<Redo2 className="w-3 h-3" />
 								</Button>
 							</TooltipTrigger>
 							<TooltipContent>
-								<p>Redo (Ctrl+Y)</p>
+								<p>Redo</p>
 							</TooltipContent>
 						</Tooltip>
 
@@ -87,6 +159,7 @@ const HighlighterTool = () => {
 									variant="outline"
 									size="sm"
 									className={"w-8 h-8 p-0 bg-transparent"}
+									onClick={() => sendClearMessage()}
 								>
 									<Trash2 className="w-3 h-3" />
 								</Button>

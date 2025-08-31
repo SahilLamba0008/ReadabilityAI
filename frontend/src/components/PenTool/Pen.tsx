@@ -6,7 +6,7 @@ import {
 	TooltipContent,
 } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
-import { PenToolCanvas } from "./Canvas";
+import { PenToolCanvas } from "./PenTool";
 
 let penTool: PenToolCanvas | null = null;
 

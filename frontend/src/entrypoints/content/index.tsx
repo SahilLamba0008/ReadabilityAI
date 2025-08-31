@@ -1,5 +1,13 @@
 import { ContentScriptContext } from "#imports";
 import {
+	ClearHighlighterToolStrokes,
+	disableHighlighterTool,
+	enableHighlighterTool,
+	RedoHighlighterToolStroke,
+	UndoHighlighterToolStroke,
+	UpdateHighlighterToolColor,
+} from "@/components/HighlighterTool";
+import {
 	disablePenTool,
 	enablePenTool,
 	clearPenToolStrokes,
@@ -40,6 +48,28 @@ export default defineContentScript({
 						break;
 					case "updateColor":
 						updatePenToolColor(message.payload.color);
+						break;
+				}
+			}
+			if (message.tool === "highlighter") {
+				switch (message.action) {
+					case "enable":
+						enableHighlighterTool();
+						break;
+					case "disable":
+						disableHighlighterTool();
+						break;
+					case "updateColor":
+						UpdateHighlighterToolColor(message.payload.color);
+						break;
+					case "undo":
+						UndoHighlighterToolStroke();
+						break;
+					case "redo":
+						RedoHighlighterToolStroke();
+						break;
+					case "clear":
+						ClearHighlighterToolStrokes();
 						break;
 				}
 			}
