@@ -18,6 +18,8 @@ import {
 import { ToolCommandMessage } from "@/lib/types";
 import "~/assets/global.css";
 
+let sidePanelIframe: HTMLIFrameElement | null = null;
+
 export default defineContentScript({
 	matches: ["https://medium.com/*/*", "https://leetcode.com/*/*/"],
 	cssInjectionMode: "ui",
@@ -26,54 +28,65 @@ export default defineContentScript({
 		await initializeSidePanel(ctx);
 		console.log("Content script initialized for Medium and LeetCode");
 
-		browser.runtime.onMessage.addListener((message: ToolCommandMessage) => {
-			console.log("Content script received message:", message);
+		browser.runtime.onMessage.addListener(
+			(
+				message:
+					| ToolCommandMessage
+					| { action: string; tool?: string; payload?: string }
+			) => {
+				console.log("Content script received message:", message);
 
-			if (message.tool === "pen") {
-				switch (message.action) {
-					case "enable":
-						enablePenTool();
-						break;
-					case "disable":
-						disablePenTool();
-						break;
-					case "undo":
-						undoPenToolStroke();
-						break;
-					case "redo":
-						redoPenToolStroke();
-						break;
-					case "clear":
-						clearPenToolStrokes();
-						break;
-					case "updateColor":
-						updatePenToolColor(message.payload.color);
-						break;
+				if (message.tool === "pen") {
+					switch (message.action) {
+						case "enable":
+							enablePenTool();
+							break;
+						case "disable":
+							disablePenTool();
+							break;
+						case "undo":
+							undoPenToolStroke();
+							break;
+						case "redo":
+							redoPenToolStroke();
+							break;
+						case "clear":
+							clearPenToolStrokes();
+							break;
+						case "updateColor":
+							updatePenToolColor(message.payload.color);
+							break;
+					}
 				}
-			}
-			if (message.tool === "highlighter") {
-				switch (message.action) {
-					case "enable":
-						enableHighlighterTool();
-						break;
-					case "disable":
-						disableHighlighterTool();
-						break;
-					case "updateColor":
-						UpdateHighlighterToolColor(message.payload.color);
-						break;
-					case "undo":
-						UndoHighlighterToolStroke();
-						break;
-					case "redo":
-						RedoHighlighterToolStroke();
-						break;
-					case "clear":
-						ClearHighlighterToolStrokes();
-						break;
+				if (message.tool === "highlighter") {
+					switch (message.action) {
+						case "enable":
+							enableHighlighterTool();
+							break;
+						case "disable":
+							disableHighlighterTool();
+							break;
+						case "updateColor":
+							UpdateHighlighterToolColor(message.payload.color);
+							break;
+						case "undo":
+							UndoHighlighterToolStroke();
+							break;
+						case "redo":
+							RedoHighlighterToolStroke();
+							break;
+						case "clear":
+							ClearHighlighterToolStrokes();
+							break;
+					}
 				}
+				if (message.action === "toggleSidepanel" && sidePanelIframe) {
+					sidePanelIframe.style.right =
+						sidePanelIframe.style.right === "0px" ? "-285px" : "0px";
+				}
+				console.log("Updated side panel position");
 			}
-		});
+		);
 	},
 });
 
@@ -83,15 +96,21 @@ async function initializeSidePanel(ctx: ContentScriptContext) {
 		position: "inline",
 		anchor: "body",
 		onMount: (wrapper, iframe) => {
-			iframe.width = "320px";
+			iframe.id = "readability-extension";
+			iframe.width = "300px";
 			iframe.height = "100%";
 			iframe.style.border = "none";
 			iframe.style.zIndex = "9999";
 			iframe.style.position = "fixed";
 			iframe.style.top = "0";
 			iframe.style.right = "0";
+			// iframe.style.backgroundColor = "red";
 			iframe.style.backgroundColor = "white";
 			iframe.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
+			iframe.style.transition =
+				"right 0.3s ease-in-out, box-shadow 0.3s ease-in-out";
+
+			sidePanelIframe = iframe;
 		},
 	});
 

@@ -74,7 +74,7 @@ const Highlights = () => {
 						Your Highlights
 					</h3>
 					<div className="flex items-center gap-2">
-						<Button
+						{/* <Button
 							variant="outline"
 							size="sm"
 							className={`w-8 h-8 p-0 ${
@@ -84,7 +84,7 @@ const Highlights = () => {
 							}`}
 						>
 							<Plus className="w-3 h-3" />
-						</Button>
+						</Button> */}
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<Button
