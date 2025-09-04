@@ -7,6 +7,8 @@ import {
 	TooltipContent,
 } from "@/components/ui/tooltip";
 import { HighlighterToolService } from "./HighlighterTool";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveTool } from "@/store/slices/toolSlice";
 
 let highlighterTool: HighlighterToolService | null =
 	new HighlighterToolService();
@@ -44,7 +46,10 @@ export const ClearHighlighterToolStrokes = () => {
 };
 
 const HighlighterTool = () => {
-	const [highlighterEnabled, setHighlighterEnabled] = useState(false);
+	const dispatch = useDispatch();
+	const activeTool = useSelector((state: any) => state.tool.activeTool);
+	const highlighterEnabled = activeTool === "highlighter";
+
 	const [selectedHighlighterColor, setSelectedHighlighterColor] =
 		useState("#FEF3C7");
 	const highlighterColors = [
@@ -97,7 +102,13 @@ const HighlighterTool = () => {
 				</div>
 				<Switch
 					checked={highlighterEnabled}
-					onCheckedChange={setHighlighterEnabled}
+					onCheckedChange={(checked) => {
+						if (checked) {
+							dispatch(setActiveTool("highlighter"));
+						} else {
+							dispatch(setActiveTool(null));
+						}
+					}}
 				/>
 			</div>
 

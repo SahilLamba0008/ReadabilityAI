@@ -82,7 +82,7 @@ export default defineContentScript({
 				}
 				if (message.action === "toggleSidepanel" && sidePanelIframe) {
 					sidePanelIframe.style.right =
-						sidePanelIframe.style.right === "0px" ? "-285px" : "0px";
+						sidePanelIframe.style.right === "0px" ? "-315px" : "0px";
 				}
 				console.log("Updated side panel position");
 			}
@@ -97,7 +97,7 @@ async function initializeSidePanel(ctx: ContentScriptContext) {
 		anchor: "body",
 		onMount: (wrapper, iframe) => {
 			iframe.id = "readability-extension";
-			iframe.width = "300px";
+			iframe.width = "330px";
 			iframe.height = "100%";
 			iframe.style.border = "none";
 			iframe.style.zIndex = "9999";

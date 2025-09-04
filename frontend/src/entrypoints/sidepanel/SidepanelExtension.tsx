@@ -12,6 +12,8 @@ import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { RefreshCw } from "lucide-react";
 import "~/assets/global.css";
+import { Provider } from "react-redux";
+import { store } from "@/store";
 
 function SidePanelApp() {
 	const [isOpen, setIsOpen] = useState(true);
@@ -80,6 +82,8 @@ function SidePanelApp() {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
-		<SidePanelApp />
+		<Provider store={store}>
+			<SidePanelApp />
+		</Provider>
 	</React.StrictMode>
 );

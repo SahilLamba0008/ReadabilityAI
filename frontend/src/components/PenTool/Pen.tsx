@@ -7,6 +7,9 @@ import {
 } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
 import { PenToolCanvas } from "./PenTool";
+import { useDispatch, useSelector } from "react-redux";
+import { use } from "react";
+import { setActiveTool } from "@/store/slices/toolSlice";
 
 let penTool: PenToolCanvas | null = null;
 
@@ -49,7 +52,10 @@ export const updatePenToolColor = (color: string) => {
 };
 
 const PenTool = () => {
-	const [penEnabled, setPenEnabled] = useState(false);
+	const dispatch = useDispatch();
+	const activeTool = useSelector((state: any) => state.tool.activeTool);
+	const penEnabled = activeTool === "pen";
+
 	const penColors = ["red", "blue", "yellow", "green"];
 
 	const [selectedPenColor, setSelectedPenColor] = useState(penColors[0]);
@@ -95,7 +101,16 @@ const PenTool = () => {
 					<Pen className={"w-4 h-4 text-foreground"} />
 					<span className={"text-sm text-foreground"}>Pen Tool</span>
 				</div>
-				<Switch checked={penEnabled} onCheckedChange={setPenEnabled} />
+				<Switch
+					checked={penEnabled}
+					onCheckedChange={(checked) => {
+						if (checked) {
+							dispatch(setActiveTool("pen"));
+						} else {
+							dispatch(setActiveTool(null));
+						}
+					}}
+				/>
 			</div>
 
 			{penEnabled && (
