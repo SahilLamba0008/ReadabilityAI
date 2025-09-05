@@ -26,27 +26,27 @@ import { Card } from "../ui/card";
 const Highlights = () => {
 	const [sortBy, setSortBy] = useState("recent");
 	const mockHighlights = [
-		{
-			id: 1,
-			text: "This is an important concept about machine learning that covers neural networks and deep learning algorithms.",
-			color: "#FEF3C7",
-			page: "AI Fundamentals",
-			title: "Machine Learning Basics",
-		},
-		{
-			id: 2,
-			text: "Key insight about data processing and analysis techniques used in modern data science workflows.",
-			color: "#D1FAE5",
-			page: "Data Science",
-			title: "Data Processing Insights",
-		},
-		{
-			id: 3,
-			text: "Critical information about user experience design principles and best practices for modern applications.",
-			color: "#DBEAFE",
-			page: "UX Design",
-			title: "UX Design Principles",
-		},
+		// {
+		// 	id: 1,
+		// 	text: "This is an important concept about machine learning that covers neural networks and deep learning algorithms.",
+		// 	color: "#FEF3C7",
+		// 	page: "AI Fundamentals",
+		// 	title: "Machine Learning Basics",
+		// },
+		// {
+		// 	id: 2,
+		// 	text: "Key insight about data processing and analysis techniques used in modern data science workflows.",
+		// 	color: "#D1FAE5",
+		// 	page: "Data Science",
+		// 	title: "Data Processing Insights",
+		// },
+		// {
+		// 	id: 3,
+		// 	text: "Critical information about user experience design principles and best practices for modern applications.",
+		// 	color: "#DBEAFE",
+		// 	page: "UX Design",
+		// 	title: "UX Design Principles",
+		// },
 	];
 
 	const highlighterColors = [

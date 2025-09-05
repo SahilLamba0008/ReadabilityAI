@@ -31,11 +31,6 @@ export class PenToolCanvas {
 	}
 
 	public enable() {
-		if (this.canvas !== null) {
-			this.addEventListeners();
-			this.canvas.style.cursor = "crosshair";
-			return;
-		}
 		this.canvas = document.createElement("canvas");
 		this.canvas.id = "penToolCanvas";
 
@@ -62,15 +57,20 @@ export class PenToolCanvas {
 		this.ctx.strokeStyle = this.options.color!;
 		this.ctx.lineWidth = this.options.lineWidth!;
 		this.ctx.lineCap = this.options.lineCap!;
+		if (this.strokes.length > 0) {
+			this.redraw();
+		}
 	}
 
 	public disable() {
-		// Note: We do not clear the canvas or strokes here to allow undo/redo after re-enabling
+		// Note: We only clear the canvas not the strokes here to allow paint after re-enabling
+		if (!this.canvas) return;
 		console.log("Disabling pen tool");
 		this.removeEventListeners();
-		if (this.canvas) {
-			this.canvas.style.cursor = "default";
-		}
+		this.canvas.style.cursor = "default";
+		this.canvas.remove();
+		this.canvas = null;
+		this.ctx = null;
 		this.drawing = false;
 	}
 
@@ -159,7 +159,7 @@ export class PenToolCanvas {
 	}
 
 	public redo() {
-		if (this.undoRedoStack.length === 0) return;
+		if (this.strokes.length === 0) return;
 		const stroke = this.undoRedoStack.pop()!;
 		this.strokes.push(stroke);
 		this.redraw();

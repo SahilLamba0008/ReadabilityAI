@@ -65,7 +65,7 @@ const PenTool = () => {
 			tool: "pen",
 			action: penEnabled ? "enable" : "disable",
 		});
-	}, [penEnabled]);
+	}, [penEnabled, activeTool]);
 
 	useEffect(() => {
 		if (penEnabled) {
