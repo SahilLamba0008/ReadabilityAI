@@ -1,14 +1,5 @@
-export interface PenToolOptions {
-	color?: string;
-	lineWidth?: number;
-	lineCap?: CanvasLineCap;
-	zIndex?: number;
-}
+import { PenToolOptions, Stroke } from "@/lib/types";
 
-export interface Stroke {
-	points: { x: number; y: number }[];
-	color: string;
-}
 
 export class PenToolCanvas {
 	private canvas: HTMLCanvasElement | null = null;

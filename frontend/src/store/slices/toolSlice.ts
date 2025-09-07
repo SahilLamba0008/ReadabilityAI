@@ -1,6 +1,5 @@
+import { ToolType } from "@/lib/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-type ToolType = "pen" | "highlighter" | null;
 
 interface ToolState {
 	activeTool: ToolType;

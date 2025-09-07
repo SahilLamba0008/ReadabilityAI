@@ -9,6 +9,7 @@ import {
 import { HighlighterToolService } from "./HighlighterTool";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveTool } from "@/store/slices/toolSlice";
+import { updateColor } from "@/store/slices/highlighterSlice";
 
 let highlighterTool: HighlighterToolService | null =
 	new HighlighterToolService();
@@ -50,8 +51,10 @@ const HighlighterTool = () => {
 	const activeTool = useSelector((state: any) => state.tool.activeTool);
 	const highlighterEnabled = activeTool === "highlighter";
 
-	const [selectedHighlighterColor, setSelectedHighlighterColor] =
-		useState("#FEF3C7");
+	const selectedHighlighterColor = useSelector(
+		(state: any) => state.highlighter.color
+	);
+
 	const highlighterColors = [
 		"#FEF3C7", // Light Yellow - better for reading
 		"#D1FAE5", // Light Green - easier on eyes
@@ -125,7 +128,7 @@ const HighlighterTool = () => {
 										: "border-gray-300"
 								}`}
 								style={{ backgroundColor: color }}
-								onClick={() => setSelectedHighlighterColor(color)}
+								onClick={() => dispatch(updateColor(color))}
 							/>
 						))}
 					</div>

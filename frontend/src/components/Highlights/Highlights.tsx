@@ -22,39 +22,17 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
+import { useSelector } from "react-redux";
+import { highlighterColors } from "@/lib/utils";
+import { Highlight } from "@/lib/types";
 
 const Highlights = () => {
 	const [sortBy, setSortBy] = useState("recent");
-	const mockHighlights = [
-		// {
-		// 	id: 1,
-		// 	text: "This is an important concept about machine learning that covers neural networks and deep learning algorithms.",
-		// 	color: "#FEF3C7",
-		// 	page: "AI Fundamentals",
-		// 	title: "Machine Learning Basics",
-		// },
-		// {
-		// 	id: 2,
-		// 	text: "Key insight about data processing and analysis techniques used in modern data science workflows.",
-		// 	color: "#D1FAE5",
-		// 	page: "Data Science",
-		// 	title: "Data Processing Insights",
-		// },
-		// {
-		// 	id: 3,
-		// 	text: "Critical information about user experience design principles and best practices for modern applications.",
-		// 	color: "#DBEAFE",
-		// 	page: "UX Design",
-		// 	title: "UX Design Principles",
-		// },
-	];
+	const storedHighlights = useSelector(
+		(state: any) => state.highlighter.highlights
+	);
 
-	const highlighterColors = [
-		"#FEF3C7", // Light Yellow - better for reading
-		"#D1FAE5", // Light Green - easier on eyes
-		"#DBEAFE", // Light Blue - good contrast
-		"#FCE7F3", // Light Pink - accessible
-	];
+	console.log("stored highlights :", storedHighlights);
 
 	const isDarkMode = false;
 
@@ -145,81 +123,86 @@ const Highlights = () => {
 					</div>
 				</div>
 				<div className="space-y-3">
-					{mockHighlights.map((highlight) => (
-						<div
-							key={highlight.id}
-							className={`p-3 border rounded-lg transition-colors relative group border-border hover:bg-accent/50`}
-						>
-							{/* Header with Title and Menu */}
-							<div className="flex items-start justify-between mb-2">
-								<div className="flex items-center gap-2 flex-1">
-									<div
-										className="w-3 h-3 rounded-full flex-shrink-0"
-										style={{ backgroundColor: highlight.color }}
-									/>
-									<h4 className={`text-sm font-medium text-foreground`}>
-										{highlight.title}
-									</h4>
+					{storedHighlights.map((highlight: Highlight) => {
+						// if (highlight === null) {
+						// 	return;
+						// }
+						return (
+							<div
+								key={highlight.id}
+								className={`p-3 border rounded-lg transition-colors relative group border-border hover:bg-accent/50`}
+							>
+								{/* Header with Title and Menu */}
+								<div className="flex items-start justify-between mb-2">
+									<div className="flex items-center gap-2 flex-1">
+										<div
+											className="w-3 h-3 rounded-full flex-shrink-0"
+											style={{ backgroundColor: highlight.color }}
+										/>
+										<h4 className={`text-sm font-medium text-foreground`}>
+											{"Title no found"}
+										</h4>
+									</div>
+
+									{/* More Menu Dropdown */}
+									<DropdownMenu>
+										<DropdownMenuTrigger asChild>
+											<Button
+												variant="ghost"
+												size="sm"
+												className={`w-6 h-6 p-0 opacity-60 hover:opacity-100 transition-opacity hover:bg-gray-100 text-gray-500 hover:text-gray-700`}
+											>
+												<MoreVertical className="w-4 h-4" />
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent align="end">
+											<DropdownMenuItem>
+												<Edit3 className="w-4 h-4 mr-2" />
+												Edit Title
+											</DropdownMenuItem>
+											<DropdownMenuItem>
+												<Edit className="w-4 h-4 mr-2" />
+												Edit Content
+											</DropdownMenuItem>
+											<DropdownMenuSeparator />
+											<DropdownMenuItem>
+												<Twitter className="w-4 h-4 mr-2" />
+												Create Tweet
+											</DropdownMenuItem>
+											<DropdownMenuItem>
+												<ImageIcon className="w-4 h-4 mr-2" />
+												Generate Quote Photo
+											</DropdownMenuItem>
+											<DropdownMenuItem>
+												<Copy className="w-4 h-4 mr-2" />
+												Copy Text
+											</DropdownMenuItem>
+											<DropdownMenuItem>
+												<Share2 className="w-4 h-4 mr-2" />
+												Share Highlight
+											</DropdownMenuItem>
+											<DropdownMenuItem>
+												<Trash2 className="w-4 h-4 mr-2" />
+												Delete Highlight
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
 								</div>
 
-								{/* More Menu Dropdown */}
-								<DropdownMenu>
-									<DropdownMenuTrigger asChild>
-										<Button
-											variant="ghost"
-											size="sm"
-											className={`w-6 h-6 p-0 opacity-60 hover:opacity-100 transition-opacity hover:bg-gray-100 text-gray-500 hover:text-gray-700`}
-										>
-											<MoreVertical className="w-4 h-4" />
-										</Button>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent align="end">
-										<DropdownMenuItem>
-											<Edit3 className="w-4 h-4 mr-2" />
-											Edit Title
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<Edit className="w-4 h-4 mr-2" />
-											Edit Content
-										</DropdownMenuItem>
-										<DropdownMenuSeparator />
-										<DropdownMenuItem>
-											<Twitter className="w-4 h-4 mr-2" />
-											Create Tweet
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<ImageIcon className="w-4 h-4 mr-2" />
-											Generate Quote Photo
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<Copy className="w-4 h-4 mr-2" />
-											Copy Text
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<Share2 className="w-4 h-4 mr-2" />
-											Share Highlight
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<Trash2 className="w-4 h-4 mr-2" />
-											Delete Highlight
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
+								{/* Page Info */}
+								<p className={`text-xs mb-2 ml-5 text-muted-foreground`}>
+									{highlight.page}
+								</p>
+
+								{/* Content */}
+								<p className={`text-sm leading-relaxed ml-5 text-foreground`}>
+									{highlight.text}
+								</p>
 							</div>
+						);
+					})}
 
-							{/* Page Info */}
-							<p className={`text-xs mb-2 ml-5 text-muted-foreground`}>
-								{highlight.page}
-							</p>
-
-							{/* Content */}
-							<p className={`text-sm leading-relaxed ml-5 text-foreground`}>
-								{highlight.text}
-							</p>
-						</div>
-					))}
-
-					{mockHighlights.length === 0 && (
+					{storedHighlights.length === 0 && (
 						<div
 							className={`text-center py-8 ${
 								isDarkMode ? "text-gray-400" : "text-muted-foreground"

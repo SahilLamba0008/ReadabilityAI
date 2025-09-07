@@ -1,17 +1,11 @@
-type Highlight = {
-	id: string;
-	text: string;
-	color: string;
-	range: Range;
-	spans: HTMLSpanElement[]; // References to the created span elements
-};
+import { Highlight } from "@/lib/types";
 
 export class HighlighterToolService {
 	private enabled = false;
 	private color: string = "#FEF3C7"; // Default light yellow
 
-	private highlights: Highlight[] = [];
-	private redoStack: Highlight[] = [];
+	public highlights: Highlight[] = [];
+	public redoStack: Highlight[] = [];
 
 	constructor(initialColor?: string) {
 		if (initialColor) this.color = initialColor;
@@ -123,7 +117,6 @@ export class HighlighterToolService {
 			range,
 			spans,
 		});
-
 		selection?.removeAllRanges();
 	};
 
