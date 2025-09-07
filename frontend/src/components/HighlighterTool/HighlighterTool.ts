@@ -110,13 +110,15 @@ export class HighlighterToolService {
 			});
 		}
 
-		this.highlights.push({
+		const newHighlight: Highlight = {
 			id: highlightId,
 			text,
 			color: this.color,
 			range,
 			spans,
-		});
+		};
+
+		this.highlights.push(newHighlight);
 		selection?.removeAllRanges();
 	};
 

@@ -23,8 +23,7 @@ const highlighterSlice = createSlice({
 			state.color = action.payload;
 		},
 		addHighlight: (state, action) => {
-			state.highlights = [];
-			state.highlights.push(action.payload.highlight);
+			state.highlights.push(action.payload);
 		},
 		undoHighlight: (state, action) => {
 			if (state.highlights.length === 0) return;

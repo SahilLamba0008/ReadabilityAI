@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import { Button } from "@/components/ui/button";
 import { ChevronsRight } from "lucide-react";
@@ -16,7 +16,6 @@ import { Provider, useDispatch, useSelector } from "react-redux";
 import { persistorStore, store } from "@/store/store";
 import { togglePanel } from "@/store/slices/sidePanelSlice";
 import { PersistGate } from "redux-persist/integration/react";
-
 function SidePanelApp() {
 	const dispatch = useDispatch();
 	const isOpen = useSelector((state: any) => state.sidePanel.isOpen);
