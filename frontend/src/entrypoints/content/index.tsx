@@ -32,7 +32,11 @@ export default defineContentScript({
 			(
 				message:
 					| ToolCommandMessage
-					| { action: string; tool?: string; payload?: string }
+					| {
+							action: string;
+							tool?: string;
+							payload?: { isOpen: boolean };
+					  }
 			) => {
 				console.log("Content script received message:", message);
 
@@ -80,9 +84,10 @@ export default defineContentScript({
 							break;
 					}
 				}
+
 				if (message.action === "toggleSidepanel" && sidePanelIframe) {
 					sidePanelIframe.style.right =
-						sidePanelIframe.style.right === "0px" ? "-315px" : "0px";
+						message.payload?.isOpen === false ? "-315px" : "0px";
 				}
 				console.log("Updated side panel position");
 			}
@@ -104,7 +109,6 @@ async function initializeSidePanel(ctx: ContentScriptContext) {
 			iframe.style.position = "fixed";
 			iframe.style.top = "0";
 			iframe.style.right = "0";
-			// iframe.style.backgroundColor = "red";
 			iframe.style.backgroundColor = "white";
 			iframe.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
 			iframe.style.transition =

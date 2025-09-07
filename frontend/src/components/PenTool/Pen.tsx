@@ -8,7 +8,6 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { PenToolCanvas } from "./PenTool";
 import { useDispatch, useSelector } from "react-redux";
-import { use } from "react";
 import { setActiveTool } from "@/store/slices/toolSlice";
 
 let penTool: PenToolCanvas | null = null;

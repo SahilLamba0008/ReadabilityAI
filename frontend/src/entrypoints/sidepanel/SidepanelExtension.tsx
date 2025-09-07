@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { Button } from "@/components/ui/button";
 import { ChevronsRight } from "lucide-react";
@@ -12,25 +12,30 @@ import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { RefreshCw } from "lucide-react";
 import "~/assets/global.css";
-import { Provider } from "react-redux";
-import { store } from "@/store";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { persistorStore, store } from "@/store/store";
+import { togglePanel } from "@/store/slices/sidePanelSlice";
+import { PersistGate } from "redux-persist/integration/react";
 
 function SidePanelApp() {
-	const [isOpen, setIsOpen] = useState(true);
+	const dispatch = useDispatch();
+	const isOpen = useSelector((state: any) => state.sidePanel.isOpen);
 
 	const handleClick = () => {
-		setIsOpen((prev) => !prev);
-		browser.runtime.sendMessage({ action: "toggleSidepanel" });
+		dispatch(togglePanel());
 	};
+
+	useEffect(() => {
+		browser.runtime.sendMessage({
+			action: "toggleSidepanel",
+			payload: { isOpen: isOpen },
+		});
+	}, [isOpen]);
 
 	return (
 		<div className="h-screen w-full flex items-center">
 			<Button
-				className={`h-full w-fit bg-transparent text-primary rounded-none ${
-					isOpen
-						? "bg-white/50 hover:bg-black/30"
-						: "bg-black/30 hover:bg-white/50 text-white"
-				} transition-all ease-in-out duration-100`}
+				className={`h-full w-fit text-primary rounded-none bg-white/50 hover:bg-black/30  transition-all ease-in-out duration-100`}
 				id="close-button"
 				variant="ghost"
 				size="icon"
@@ -83,7 +88,9 @@ function SidePanelApp() {
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<Provider store={store}>
-			<SidePanelApp />
+			<PersistGate loading={null} persistor={persistorStore}>
+				<SidePanelApp />
+			</PersistGate>
 		</Provider>
 	</React.StrictMode>
 );
