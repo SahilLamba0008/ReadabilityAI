@@ -56,8 +56,14 @@ export class HighlighterToolService {
 			range = selection?.getRangeAt(0);
 			text = selection?.toString();
 		}
-		if (!range || !text) return; // No selection and no highlight provided
-		if (!text.trim()) return;
+		if (!range || !text) {
+			console.log("No selection and no highlight provided");
+			return; // No selection and no highlight provided
+		}
+		if (!text.trim()) {
+			console.log("No real selection left after text trim");
+			return;
+		}
 
 		const highlightId = highlight ? highlight.id : crypto.randomUUID();
 		const spans: HTMLSpanElement[] = [];
@@ -122,7 +128,6 @@ export class HighlighterToolService {
 			range,
 			spans,
 		};
-
 		this.highlights.push(newHighlight);
 		selection?.removeAllRanges();
 		this.dispatch(addHighlight(newHighlight));
