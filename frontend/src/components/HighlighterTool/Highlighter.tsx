@@ -11,9 +11,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { setActiveTool } from "@/store/slices/toolSlice";
 import { updateColor } from "@/store/slices/highlighterSlice";
 import { highlighterColors } from "@/lib/utils";
+import { store } from "@/store/store";
 
-let highlighterTool: HighlighterToolService | null =
-	new HighlighterToolService();
+export let highlighterTool: HighlighterToolService | null = new HighlighterToolService(
+	store.dispatch
+);
 
 export const enableHighlighterTool = () => {
 	console.log("Enabling highlighter tool with message:");
@@ -44,7 +46,7 @@ export const RedoHighlighterToolStroke = () => {
 export const ClearHighlighterToolStrokes = () => {
 	console.log("Clearing highlighter tool strokes");
 	highlighterTool?.clearAll();
-	highlighterTool = new HighlighterToolService();
+	highlighterTool = new HighlighterToolService(store.dispatch);
 };
 
 const HighlighterTool = () => {

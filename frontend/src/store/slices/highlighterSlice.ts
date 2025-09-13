@@ -23,7 +23,10 @@ const highlighterSlice = createSlice({
 			state.color = action.payload;
 		},
 		addHighlight: (state, action) => {
+			console.log("called from class with payload", action.payload);
+			console.log("event type :", action.type);
 			state.highlights.push(action.payload);
+			console.log("highlights array", state.highlights);
 		},
 		undoHighlight: (state, action) => {
 			if (state.highlights.length === 0) return;

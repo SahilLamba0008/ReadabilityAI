@@ -25,14 +25,21 @@ import { Card } from "../ui/card";
 import { useSelector } from "react-redux";
 import { highlighterColors } from "@/lib/utils";
 import { Highlight } from "@/lib/types";
+import { RootState, store } from "@/store/store";
+import { highlighterTool } from "../HighlighterTool/Highlighter";
 
 const Highlights = () => {
 	const [sortBy, setSortBy] = useState("recent");
-	const storedHighlights = useSelector(
-		(state: any) => state.highlighter.highlights
-	);
 
+	// const storedHighlights = useSelector(
+	// 	(state: RootState) => state.highlighter.highlights
+	// );
+
+	const storedHighlights = highlighterTool?.highlights;
+
+	console.log("store from highlights :", store);
 	console.log("stored highlights :", storedHighlights);
+	
 
 	const isDarkMode = false;
 
@@ -123,7 +130,7 @@ const Highlights = () => {
 					</div>
 				</div>
 				<div className="space-y-3">
-					{storedHighlights.map((highlight: Highlight) => {
+					{storedHighlights?.map((highlight: Highlight) => {
 						// if (highlight === null) {
 						// 	return;
 						// }
@@ -191,7 +198,7 @@ const Highlights = () => {
 
 								{/* Page Info */}
 								<p className={`text-xs mb-2 ml-5 text-muted-foreground`}>
-									{highlight.page}
+									{"highlight.page"}
 								</p>
 
 								{/* Content */}
@@ -202,7 +209,7 @@ const Highlights = () => {
 						);
 					})}
 
-					{storedHighlights.length === 0 && (
+					{storedHighlights?.length === 0 && (
 						<div
 							className={`text-center py-8 ${
 								isDarkMode ? "text-gray-400" : "text-muted-foreground"

@@ -1,4 +1,6 @@
 import { Highlight } from "@/lib/types";
+import { addHighlight } from "@/store/slices/highlighterSlice";
+import { store } from "@/store/store";
 
 export class HighlighterToolService {
 	private enabled = false;
@@ -7,8 +9,11 @@ export class HighlighterToolService {
 	public highlights: Highlight[] = [];
 	public redoStack: Highlight[] = [];
 
-	constructor(initialColor?: string) {
+	private dispatch: typeof store.dispatch;
+
+	constructor(dispatch: typeof store.dispatch, initialColor?: string) {
 		if (initialColor) this.color = initialColor;
+		this.dispatch = dispatch;
 	}
 
 	public enable() {
@@ -120,6 +125,7 @@ export class HighlighterToolService {
 
 		this.highlights.push(newHighlight);
 		selection?.removeAllRanges();
+		this.dispatch(addHighlight(newHighlight));
 	};
 
 	private removeHighlight = (index: number) => {
@@ -148,7 +154,7 @@ export class HighlighterToolService {
 		const undoneHighlight = this.highlights.pop()!;
 		this.redoStack.push(undoneHighlight);
 		console.log("highlights after undo:", this.highlights);
-		// console.log("Redo stack after undo:", this.redoStack);
+		console.log("Redo stack after undo:", this.redoStack);
 	}
 
 	public redo() {
