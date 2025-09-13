@@ -26,20 +26,15 @@ import { useSelector } from "react-redux";
 import { highlighterColors } from "@/lib/utils";
 import { Highlight } from "@/lib/types";
 import { RootState, store } from "@/store/store";
-import { highlighterTool } from "../HighlighterTool/Highlighter";
 
 const Highlights = () => {
 	const [sortBy, setSortBy] = useState("recent");
 
-	// const storedHighlights = useSelector(
-	// 	(state: RootState) => state.highlighter.highlights
-	// );
-
-	const storedHighlights = highlighterTool?.highlights;
+	const storedHighlights = useSelector(
+		(state: RootState) => state.highlighter.highlights
+	);
 
 	console.log("store from highlights :", store);
-	console.log("stored highlights :", storedHighlights);
-	
 
 	const isDarkMode = false;
 

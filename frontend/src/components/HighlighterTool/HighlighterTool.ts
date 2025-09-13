@@ -129,8 +129,8 @@ export class HighlighterToolService {
 			spans,
 		};
 		this.highlights.push(newHighlight);
-		selection?.removeAllRanges();
 		this.dispatch(addHighlight(newHighlight));
+		selection?.removeAllRanges();
 	};
 
 	private removeHighlight = (index: number) => {

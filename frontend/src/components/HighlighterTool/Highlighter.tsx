@@ -13,7 +13,7 @@ import { updateColor } from "@/store/slices/highlighterSlice";
 import { highlighterColors } from "@/lib/utils";
 import { store } from "@/store/store";
 
-export let highlighterTool: HighlighterToolService | null = new HighlighterToolService(
+let highlighterTool: HighlighterToolService | null = new HighlighterToolService(
 	store.dispatch
 );
 
