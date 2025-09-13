@@ -1,4 +1,6 @@
 import { Highlight } from "@/lib/types";
+import { addHighlight } from "@/store/slices/highlighterSlice";
+import { store } from "@/store/store";
 
 export class HighlighterToolService {
 	private enabled = false;
@@ -7,8 +9,11 @@ export class HighlighterToolService {
 	public highlights: Highlight[] = [];
 	public redoStack: Highlight[] = [];
 
-	constructor(initialColor?: string) {
+	private dispatch: typeof store.dispatch;
+
+	constructor(dispatch: typeof store.dispatch, initialColor?: string) {
 		if (initialColor) this.color = initialColor;
+		this.dispatch = dispatch;
 	}
 
 	public enable() {
@@ -51,8 +56,14 @@ export class HighlighterToolService {
 			range = selection?.getRangeAt(0);
 			text = selection?.toString();
 		}
-		if (!range || !text) return; // No selection and no highlight provided
-		if (!text.trim()) return;
+		if (!range || !text) {
+			console.log("No selection and no highlight provided");
+			return; // No selection and no highlight provided
+		}
+		if (!text.trim()) {
+			console.log("No real selection left after text trim");
+			return;
+		}
 
 		const highlightId = highlight ? highlight.id : crypto.randomUUID();
 		const spans: HTMLSpanElement[] = [];
@@ -117,8 +128,8 @@ export class HighlighterToolService {
 			range,
 			spans,
 		};
-
 		this.highlights.push(newHighlight);
+		this.dispatch(addHighlight(newHighlight));
 		selection?.removeAllRanges();
 	};
 
@@ -148,7 +159,7 @@ export class HighlighterToolService {
 		const undoneHighlight = this.highlights.pop()!;
 		this.redoStack.push(undoneHighlight);
 		console.log("highlights after undo:", this.highlights);
-		// console.log("Redo stack after undo:", this.redoStack);
+		console.log("Redo stack after undo:", this.redoStack);
 	}
 
 	public redo() {

@@ -1,7 +1,39 @@
 import { highlighterColors } from "@/lib/utils";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import { Highlight } from "@/lib/types";
 
+const dummyRange = document.createRange();
+const dummySpan = document.createElement("span");
+
+export const dummyHighlights: Highlight[] = [
+	{
+		id: "1",
+		text: "This is the first highlighted text.",
+		color: "#FFEB3B", // yellow
+		range: dummyRange,
+		spans: [dummySpan],
+		page: "1",
+		title: "Intro Page",
+	},
+	{
+		id: "2",
+		text: "Another highlighted section in blue.",
+		color: "#2196F3", // blue
+		range: dummyRange,
+		spans: [dummySpan],
+		page: "2",
+		title: "Chapter 1",
+	},
+	{
+		id: "3",
+		text: "Final dummy highlight in green.",
+		color: "#4CAF50", // green
+		range: dummyRange,
+		spans: [dummySpan],
+		page: "3",
+		title: "Conclusion",
+	},
+];
 interface HighlighterState {
 	color: string;
 	highlights: Highlight[];
@@ -10,7 +42,7 @@ interface HighlighterState {
 
 const initialState: HighlighterState = {
 	color: highlighterColors[0],
-	highlights: [],
+	highlights: dummyHighlights,
 	redoStack: [],
 };
 
