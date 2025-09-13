@@ -148,7 +148,7 @@ export class HighlighterToolService {
 		const undoneHighlight = this.highlights.pop()!;
 		this.redoStack.push(undoneHighlight);
 		console.log("highlights after undo:", this.highlights);
-		console.log("Redo stack after undo:", this.redoStack);
+		// console.log("Redo stack after undo:", this.redoStack);
 	}
 
 	public redo() {
