@@ -63,24 +63,26 @@ export default defineContentScript({
 					}
 				}
 				if (message.tool === "highlighter") {
+					const toolObj = message.payload.toolObj;
+
 					switch (message.action) {
 						case "enable":
-							enableHighlighterTool();
+							enableHighlighterTool(toolObj);
 							break;
 						case "disable":
-							disableHighlighterTool();
+							disableHighlighterTool(toolObj);
 							break;
 						case "updateColor":
-							UpdateHighlighterToolColor(message.payload.color);
+							UpdateHighlighterToolColor(toolObj, message.payload.color);
 							break;
 						case "undo":
-							UndoHighlighterToolStroke();
+							UndoHighlighterToolStroke(toolObj);
 							break;
 						case "redo":
-							RedoHighlighterToolStroke();
+							RedoHighlighterToolStroke(toolObj);
 							break;
 						case "clear":
-							ClearHighlighterToolStrokes();
+							ClearHighlighterToolStrokes(toolObj);
 							break;
 					}
 				}

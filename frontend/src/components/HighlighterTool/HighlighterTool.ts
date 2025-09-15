@@ -1,6 +1,5 @@
-import { Highlight } from "@/lib/types";
+import { Highlight, HighlightMeta } from "@/lib/types";
 import { addHighlight } from "@/store/slices/highlighterSlice";
-import { store } from "@/store/store";
 
 export class HighlighterToolService {
 	private enabled = false;
@@ -9,10 +8,14 @@ export class HighlighterToolService {
 	public highlights: Highlight[] = [];
 	public redoStack: Highlight[] = [];
 
-	private dispatch: typeof store.dispatch;
+	private dispatch: any;
 
-	constructor(dispatch: typeof store.dispatch, initialColor?: string) {
+	constructor(initialColor?: string) {
 		if (initialColor) this.color = initialColor;
+	}
+
+	public setDispatch(dispatch: any) {
+		console.log("instinciated dispatch :", dispatch);
 		this.dispatch = dispatch;
 	}
 
@@ -129,7 +132,15 @@ export class HighlighterToolService {
 			spans,
 		};
 		this.highlights.push(newHighlight);
-		this.dispatch(addHighlight(newHighlight));
+
+		const newReduxHighlight: HighlightMeta = {
+			id: highlightId,
+			title: "Redux Highilight",
+			color: this.color,
+			text,
+		};
+		this.dispatch(addHighlight(newReduxHighlight));
+
 		selection?.removeAllRanges();
 	};
 

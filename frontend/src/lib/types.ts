@@ -31,3 +31,5 @@ export type Highlight = {
 	page?: string;
 	title?: string;
 };
+
+export type HighlightMeta = Omit<Highlight, "range" | "spans" | "page">;
