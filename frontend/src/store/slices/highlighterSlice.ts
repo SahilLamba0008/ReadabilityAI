@@ -1,11 +1,11 @@
 import { highlighterColors } from "@/lib/utils";
 import { createSlice } from "@reduxjs/toolkit";
-import { Highlight } from "@/lib/types";
+import { HighlightMeta } from "@/lib/types";
 
 interface HighlighterState {
 	color: string;
-	highlights: Highlight[];
-	redoStack: Highlight[];
+	highlights: HighlightMeta[];
+	redoStack: HighlightMeta[];
 }
 
 const initialState: HighlighterState = {
@@ -23,6 +23,8 @@ const highlighterSlice = createSlice({
 			state.color = action.payload;
 		},
 		addHighlight: (state, action) => {
+			console.log("addHighlights action :", action.payload);
+			console.log("add highlight action type :", action.type);
 			state.highlights.push(action.payload);
 		},
 		undoHighlight: (state, action) => {

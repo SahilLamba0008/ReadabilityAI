@@ -12,43 +12,60 @@ import { setActiveTool } from "@/store/slices/toolSlice";
 import { updateColor } from "@/store/slices/highlighterSlice";
 import { highlighterColors } from "@/lib/utils";
 
-let highlighterTool: HighlighterToolService | null =
-	new HighlighterToolService();
-
-export const enableHighlighterTool = () => {
-	console.log("Enabling highlighter tool with message:");
+export const enableHighlighterTool = (
+	highlighterTool: HighlighterToolService | null
+) => {
+	console.log("Enabling highlighter tool with message:", highlighterTool);
 	highlighterTool?.enable();
 };
 
-export const disableHighlighterTool = () => {
+export const disableHighlighterTool = (
+	highlighterTool: HighlighterToolService | null
+) => {
 	highlighterTool?.disable();
 	console.log("Disabling highlighter tool with message:");
 };
 
-export const UpdateHighlighterToolColor = (color: string) => {
+export const UpdateHighlighterToolColor = (
+	color: string,
+	highlighterTool: HighlighterToolService | null
+) => {
 	if (highlighterTool) {
 		highlighterTool.setColor(color);
 	}
 	console.log("Updated highlighter tool color to:", color);
 };
 
-export const UndoHighlighterToolStroke = () => {
+export const UndoHighlighterToolStroke = (
+	highlighterTool: HighlighterToolService | null
+) => {
 	console.log("Undoing highlighter tool stroke");
 	highlighterTool?.undo();
 };
-export const RedoHighlighterToolStroke = () => {
+export const RedoHighlighterToolStroke = (
+	highlighterTool: HighlighterToolService | null
+) => {
 	console.log("Redoing highlighter tool stroke");
 	highlighterTool?.redo();
 };
 
-export const ClearHighlighterToolStrokes = () => {
+export const ClearHighlighterToolStrokes = (
+	highlighterTool: HighlighterToolService | null
+) => {
 	console.log("Clearing highlighter tool strokes");
 	highlighterTool?.clearAll();
 	highlighterTool = new HighlighterToolService();
 };
 
 const HighlighterTool = () => {
+	const highlighterTool: HighlighterToolService | null =
+		new HighlighterToolService();
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		highlighterTool?.setDispatch(dispatch);
+	}, [dispatch]);
+
 	const activeTool = useSelector((state: any) => state.tool.activeTool);
 	const highlighterEnabled = activeTool === "highlighter";
 
@@ -60,6 +77,9 @@ const HighlighterTool = () => {
 		browser.runtime.sendMessage({
 			tool: "highlighter",
 			action: highlighterEnabled ? "enable" : "disable",
+			payload: {
+				toolObj: highlighterTool,
+			},
 		});
 	}, [highlighterEnabled]);
 
@@ -70,6 +90,7 @@ const HighlighterTool = () => {
 				action: "updateColor",
 				payload: {
 					color: selectedHighlighterColor,
+					toolObj: highlighterTool,
 				},
 			});
 		}
