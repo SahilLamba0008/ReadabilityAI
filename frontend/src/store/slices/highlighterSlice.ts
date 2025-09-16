@@ -29,6 +29,7 @@ const highlighterSlice = createSlice({
 				action.type
 			);
 			state.highlights.push(action.payload);
+			console.log("Pushed to array :", state.highlights.slice());
 		},
 		undoHighlight: (state, action) => {
 			if (state.highlights.length === 0) return;

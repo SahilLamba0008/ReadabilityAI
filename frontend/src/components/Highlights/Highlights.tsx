@@ -33,7 +33,9 @@ const Highlights = () => {
 		(state: RootState) => state.highlighter.highlights
 	);
 
-	console.log("store highlights :", storedHighlights);
+	useEffect(() => {
+		console.log("store highlights :", storedHighlights);
+	}, [storedHighlights]);
 
 	const isDarkMode = false;
 
