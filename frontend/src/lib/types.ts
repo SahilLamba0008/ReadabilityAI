@@ -31,3 +31,5 @@ export type Highlight = {
 	page?: string;
 	title?: string;
 };
+
+export type StoreHighlight = Pick<Highlight, "id" | "text" | "color" | "title">;

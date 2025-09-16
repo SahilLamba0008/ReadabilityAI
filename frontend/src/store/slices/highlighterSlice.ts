@@ -19,10 +19,15 @@ const highlighterSlice = createSlice({
 	initialState,
 	reducers: {
 		updateColor: (state, action) => {
-			console.log("Updating highlighter Slice color to :", action.payload);
 			state.color = action.payload;
 		},
 		addHighlight: (state, action) => {
+			console.log(
+				"tiggered addHighlight",
+				state.highlights,
+				action.payload,
+				action.type
+			);
 			state.highlights.push(action.payload);
 		},
 		undoHighlight: (state, action) => {

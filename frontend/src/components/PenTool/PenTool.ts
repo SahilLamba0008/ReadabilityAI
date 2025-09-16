@@ -1,6 +1,5 @@
 import { PenToolOptions, Stroke } from "@/lib/types";
 
-
 export class PenToolCanvas {
 	private canvas: HTMLCanvasElement | null = null;
 	private ctx: CanvasRenderingContext2D | null = null;

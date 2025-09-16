@@ -9,40 +9,35 @@ import {
 import { HighlighterToolService } from "./HighlighterTool";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveTool } from "@/store/slices/toolSlice";
-import { updateColor } from "@/store/slices/highlighterSlice";
+import { addHighlight, updateColor } from "@/store/slices/highlighterSlice";
 import { highlighterColors } from "@/lib/utils";
+import { store } from "@/store/store";
 
 let highlighterTool: HighlighterToolService | null =
 	new HighlighterToolService();
 
 export const enableHighlighterTool = () => {
-	console.log("Enabling highlighter tool with message:");
 	highlighterTool?.enable();
 };
 
 export const disableHighlighterTool = () => {
 	highlighterTool?.disable();
-	console.log("Disabling highlighter tool with message:");
 };
 
 export const UpdateHighlighterToolColor = (color: string) => {
 	if (highlighterTool) {
 		highlighterTool.setColor(color);
 	}
-	console.log("Updated highlighter tool color to:", color);
 };
 
 export const UndoHighlighterToolStroke = () => {
-	console.log("Undoing highlighter tool stroke");
 	highlighterTool?.undo();
 };
 export const RedoHighlighterToolStroke = () => {
-	console.log("Redoing highlighter tool stroke");
 	highlighterTool?.redo();
 };
 
 export const ClearHighlighterToolStrokes = () => {
-	console.log("Clearing highlighter tool strokes");
 	highlighterTool?.clearAll();
 	highlighterTool = new HighlighterToolService();
 };

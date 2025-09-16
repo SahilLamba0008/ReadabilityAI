@@ -13,7 +13,6 @@ import { setActiveTool } from "@/store/slices/toolSlice";
 let penTool: PenToolCanvas | null = null;
 
 export const enablePenTool = () => {
-	console.log("Enabling pen tool with message:");
 	if (!penTool) {
 		penTool = new PenToolCanvas({ color: "red" });
 	}
@@ -22,32 +21,23 @@ export const enablePenTool = () => {
 
 export const disablePenTool = () => {
 	penTool?.disable();
-	console.log("Disabling pen tool with message:");
 };
 
 export const undoPenToolStroke = () => {
-	console.log("Undoing pen tool stroke");
 	penTool?.undo();
 };
 
 export const redoPenToolStroke = () => {
-	console.log("Redoing pen tool stroke");
 	penTool?.redo();
 };
 
 export const clearPenToolStrokes = () => {
-	console.log("Clearing pen tool strokes");
 	penTool?.clear();
 	penTool = null;
 };
 
 export const updatePenToolColor = (color: string) => {
-	if (penTool) {
-		penTool.setColor(color);
-		console.log("Updated pen tool color to:", color);
-	} else {
-		console.log("Pen tool is not enabled. Cannot update color.");
-	}
+	penTool?.setColor(color);
 };
 
 const PenTool = () => {

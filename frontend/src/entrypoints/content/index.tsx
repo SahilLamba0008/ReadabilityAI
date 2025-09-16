@@ -26,8 +26,6 @@ export default defineContentScript({
 
 	async main(ctx) {
 		await initializeSidePanel(ctx);
-		console.log("Content script initialized for Medium and LeetCode");
-
 		browser.runtime.onMessage.addListener(
 			(
 				message:
@@ -89,7 +87,6 @@ export default defineContentScript({
 					sidePanelIframe.style.right =
 						message.payload?.isOpen === false ? "-315px" : "0px";
 				}
-				console.log("Updated side panel position");
 			}
 		);
 	},

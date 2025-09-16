@@ -1,4 +1,6 @@
-import { Highlight } from "@/lib/types";
+import { Highlight, StoreHighlight } from "@/lib/types";
+import { addHighlight } from "@/store/slices/highlighterSlice";
+import { store } from "@/store/store";
 
 export class HighlighterToolService {
 	private enabled = false;
@@ -35,18 +37,15 @@ export class HighlighterToolService {
 
 	private paintSelection = (highlight?: Highlight) => {
 		const selection = window.getSelection();
-		console.log("Painting provided highlight before collapse check", highlight);
 		// if (selection?.isCollapsed) return; // In case of highlight params, selection would be undefined
 
 		let range = null;
 		let text = null;
 		if (highlight) {
 			// override with provided highlight if present
-			console.log("range and text before :", range, text);
 			range = highlight.range;
 			text = highlight.text;
 			this.color = highlight.color;
-			console.log("range and text after :", range, text);
 		} else {
 			range = selection?.getRangeAt(0);
 			text = selection?.toString();
@@ -69,16 +68,12 @@ export class HighlighterToolService {
 			}
 		);
 
-		if (highlight) console.log("walker created from highlight range:", walker);
-
 		const textNodes: Text[] = [];
 		while (walker.nextNode()) {
 			textNodes.push(walker.currentNode as Text);
 		}
-		if (highlight) console.log("Text nodes found in range:", textNodes);
 		// If selection is within a single text node
 		if (textNodes.length === 0) {
-			console.log("No text nodes found in range, highlighting entire range");
 			const span = document.createElement("span");
 			span.style.backgroundColor = this.color;
 			span.setAttribute("data-highlight-id", highlightId);
@@ -105,8 +100,6 @@ export class HighlighterToolService {
 
 				nodeRange.surroundContents(span);
 				spans.push(span);
-				if (highlight)
-					console.log("Created span for multiple text node :", span);
 			});
 		}
 
@@ -117,8 +110,15 @@ export class HighlighterToolService {
 			range,
 			spans,
 		};
-
 		this.highlights.push(newHighlight);
+
+		const newStoreHiglight: StoreHighlight = {
+			id: highlightId,
+			text,
+			color: this.color,
+			title: "Stored Highlight from class",
+		};
+		store.dispatch(addHighlight(newStoreHiglight));
 		selection?.removeAllRanges();
 	};
 
@@ -143,22 +143,17 @@ export class HighlighterToolService {
 
 	public undo() {
 		if (this.highlights.length === 0) return;
-		console.log("highlights before undo:", this.highlights);
 		this.removeHighlight(this.highlights.length - 1);
 		const undoneHighlight = this.highlights.pop()!;
 		this.redoStack.push(undoneHighlight);
-		console.log("highlights after undo:", this.highlights);
-		// console.log("Redo stack after undo:", this.redoStack);
 	}
 
 	public redo() {
 		if (this.redoStack.length === 0) {
-			console.log("redo stack empty");
 			return;
 		}
 		const highlight = this.redoStack.pop()!;
 		this.paintSelection(highlight);
-		console.log("Redo performed", highlight);
 	}
 
 	public clearAll() {
