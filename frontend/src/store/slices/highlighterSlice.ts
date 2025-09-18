@@ -22,14 +22,7 @@ const highlighterSlice = createSlice({
 			state.color = action.payload;
 		},
 		addHighlight: (state, action) => {
-			console.log(
-				"tiggered addHighlight",
-				state.highlights,
-				action.payload,
-				action.type
-			);
 			state.highlights.push(action.payload);
-			console.log("Pushed to array :", state.highlights.slice());
 		},
 		undoHighlight: (state, action) => {
 			if (state.highlights.length === 0) return;

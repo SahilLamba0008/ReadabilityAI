@@ -12,7 +12,7 @@ import { setActiveTool } from "@/store/slices/toolSlice";
 import { updateColor } from "@/store/slices/highlighterSlice";
 import { highlighterColors } from "@/lib/utils";
 
-const highlighterTool: HighlighterToolService = new HighlighterToolService();
+let highlighterTool: HighlighterToolService = new HighlighterToolService();
 
 export const enableHighlighterTool = () => {
 	highlighterTool?.enable();
@@ -37,13 +37,11 @@ export const RedoHighlighterToolStroke = () => {
 
 export const ClearHighlighterToolStrokes = () => {
 	highlighterTool?.clearAll();
-	// highlighterTool = new HighlighterToolService();
+	highlighterTool = new HighlighterToolService();
 };
 
 const HighlighterTool = () => {
 	const dispatch = useDispatch();
-	highlighterTool?.setDispatch(dispatch);
-
 	const activeTool = useSelector((state: any) => state.tool.activeTool);
 	const highlighterEnabled = activeTool === "highlighter";
 

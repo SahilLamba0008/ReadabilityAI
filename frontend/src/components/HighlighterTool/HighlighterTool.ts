@@ -1,6 +1,5 @@
 import { Highlight, StoreHighlight } from "@/lib/types";
 import { addHighlight } from "@/store/slices/highlighterSlice";
-import { AppDispatch, store } from "@/store/store";
 
 export class HighlighterToolService {
 	private enabled = false;
@@ -11,12 +10,6 @@ export class HighlighterToolService {
 
 	constructor(initialColor?: string) {
 		if (initialColor) this.color = initialColor;
-	}
-
-	private dispatch?: AppDispatch;
-	public setDispatch(dispatch: AppDispatch) {
-		console.log("dispatch set");
-		this.dispatch = dispatch;
 	}
 
 	public enable() {
@@ -117,20 +110,6 @@ export class HighlighterToolService {
 			spans,
 		};
 		this.highlights.push(newHighlight);
-
-		const newStoredHighlight: StoreHighlight = {
-			id: highlightId,
-			text,
-			color: this.color,
-			title: "Stored Highlight from class",
-		};
-
-		if (!this.dispatch) {
-			console.warn("Dispatch not set on HighlighterToolService");
-			return;
-		}
-
-		this.dispatch(addHighlight(newStoredHighlight));
 		selection?.removeAllRanges();
 	};
 
