@@ -9,13 +9,16 @@ import {
 import { HighlighterToolService } from "./HighlighterTool";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveTool } from "@/store/slices/toolSlice";
-import { updateColor } from "@/store/slices/highlighterSlice";
+import { addHighlight, updateColor } from "@/store/slices/highlighterSlice";
 import { highlighterColors } from "@/lib/utils";
 
-let highlighterTool: HighlighterToolService = new HighlighterToolService();
+let highlighterTool: HighlighterToolService | null = null;
 
 export const enableHighlighterTool = () => {
-	highlighterTool?.enable();
+	if (!highlighterTool) {
+		highlighterTool = new HighlighterToolService();
+	}
+	highlighterTool.enable();
 };
 
 export const disableHighlighterTool = () => {
@@ -23,21 +26,20 @@ export const disableHighlighterTool = () => {
 };
 
 export const UpdateHighlighterToolColor = (color: string) => {
-	if (highlighterTool) {
-		highlighterTool.setColor(color);
-	}
+	highlighterTool?.setColor(color);
 };
 
 export const UndoHighlighterToolStroke = () => {
 	highlighterTool?.undo();
 };
+
 export const RedoHighlighterToolStroke = () => {
 	highlighterTool?.redo();
 };
 
 export const ClearHighlighterToolStrokes = () => {
 	highlighterTool?.clearAll();
-	highlighterTool = new HighlighterToolService();
+	highlighterTool = null;
 };
 
 const HighlighterTool = () => {
@@ -67,6 +69,25 @@ const HighlighterTool = () => {
 			});
 		}
 	}, [selectedHighlighterColor, highlighterEnabled]);
+
+	useEffect(() => {
+		let lastPayload: any = null;
+
+		const listener = (message: any) => {
+			if (message.tool === "highlighter" && message.type === "add_highlight") {
+				// Prevent duplicate dispatches
+				if (JSON.stringify(message.payload) === JSON.stringify(lastPayload))
+					return;
+
+				lastPayload = message.payload;
+				console.log("payload :", message.payload);
+				dispatch(addHighlight(message.payload));
+			}
+		};
+
+		browser.runtime.onMessage.addListener(listener);
+		return () => browser.runtime.onMessage.removeListener(listener);
+	}, [dispatch]);
 
 	function sendUndoRedoMessage(action: "undo" | "redo") {
 		console.log(`Sending ${action} message`);

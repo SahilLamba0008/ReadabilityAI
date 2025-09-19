@@ -143,7 +143,7 @@ const Highlights = () => {
 											style={{ backgroundColor: highlight.color }}
 										/>
 										<h4 className={`text-sm font-medium text-foreground`}>
-											{"Title no found"}
+											{highlight.title ?? "No title"}
 										</h4>
 									</div>
 

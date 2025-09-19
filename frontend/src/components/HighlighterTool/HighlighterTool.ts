@@ -1,10 +1,8 @@
 import { Highlight, StoreHighlight } from "@/lib/types";
-import { addHighlight } from "@/store/slices/highlighterSlice";
 
 export class HighlighterToolService {
 	private enabled = false;
 	private color: string = "#FEF3C7"; // Default light yellow
-
 	public highlights: Highlight[] = [];
 	public redoStack: Highlight[] = [];
 
@@ -36,7 +34,7 @@ export class HighlighterToolService {
 
 	private paintSelection = (highlight?: Highlight) => {
 		const selection = window.getSelection();
-		// if (selection?.isCollapsed) return; // In case of highlight params, selection would be undefined
+		if (selection?.isCollapsed) return; // In case of highlight params, selection would be undefined
 
 		let range = null;
 		let text = null;
@@ -110,6 +108,19 @@ export class HighlighterToolService {
 			spans,
 		};
 		this.highlights.push(newHighlight);
+
+		const storeHighlight: StoreHighlight = {
+			id: highlightId,
+			color: this.color,
+			text,
+		};
+
+		browser.runtime.sendMessage({
+			tool: "highlighter",
+			type: "add_highlight",
+			payload: storeHighlight,
+		});
+
 		selection?.removeAllRanges();
 	};
 
