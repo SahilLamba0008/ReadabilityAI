@@ -3,12 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Highlight } from "@/lib/types";
 
 interface HighlighterState {
+	highlightCount: number;
 	color: string;
 	highlights: Highlight[];
 	redoStack: Highlight[];
 }
 
 const initialState: HighlighterState = {
+	highlightCount: 1,
 	color: highlighterColors[0],
 	highlights: [],
 	redoStack: [],
@@ -19,11 +21,12 @@ const highlighterSlice = createSlice({
 	initialState,
 	reducers: {
 		updateColor: (state, action) => {
-			console.log("Updating highlighter Slice color to :", action.payload);
 			state.color = action.payload;
 		},
 		addHighlight: (state, action) => {
-			state.highlights.push(action.payload);
+			const title = `Highlight no - ${state.highlightCount++}`;
+			const updatedHighlight = { ...action.payload, title };
+			state.highlights.push(updatedHighlight);
 		},
 		undoHighlight: (state, action) => {
 			if (state.highlights.length === 0) return;

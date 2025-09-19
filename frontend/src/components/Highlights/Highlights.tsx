@@ -25,14 +25,17 @@ import { Card } from "../ui/card";
 import { useSelector } from "react-redux";
 import { highlighterColors } from "@/lib/utils";
 import { Highlight } from "@/lib/types";
+import { RootState } from "@/store/store";
 
 const Highlights = () => {
 	const [sortBy, setSortBy] = useState("recent");
 	const storedHighlights = useSelector(
-		(state: any) => state.highlighter.highlights
+		(state: RootState) => state.highlighter.highlights
 	);
 
-	console.log("stored highlights :", storedHighlights);
+	useEffect(() => {
+		console.log("store highlights :", storedHighlights);
+	}, [storedHighlights]);
 
 	const isDarkMode = false;
 
@@ -140,7 +143,7 @@ const Highlights = () => {
 											style={{ backgroundColor: highlight.color }}
 										/>
 										<h4 className={`text-sm font-medium text-foreground`}>
-											{"Title no found"}
+											{highlight.title ?? "No title"}
 										</h4>
 									</div>
 
