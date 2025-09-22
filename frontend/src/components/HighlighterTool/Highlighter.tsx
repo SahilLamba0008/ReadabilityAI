@@ -75,12 +75,18 @@ const HighlighterTool = () => {
 
 		const listener = (message: any) => {
 			if (message.tool === "highlighter" && message.type === "add_highlight") {
-				// Prevent duplicate dispatches
+				const activeTabId = message.activeTabId;
+				const senderTabId = message.senderTabId;
+
+				if (typeof activeTabId !== "number" || typeof senderTabId !== "number")
+					return;
+				if (activeTabId !== senderTabId) return;
+
 				if (JSON.stringify(message.payload) === JSON.stringify(lastPayload))
 					return;
 
 				lastPayload = message.payload;
-				console.log("payload :", message.payload);
+
 				dispatch(addHighlight(message.payload));
 			}
 		};

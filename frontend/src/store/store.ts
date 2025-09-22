@@ -4,7 +4,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import toolReducer from "./slices/toolSlice";
 import sidePanelReducer from "./slices/sidePanelSlice";
 import highlighterReducer from "./slices/highlighterSlice";
-import browserStorage from "./browserStorage";
+import sessionStorage from "redux-persist/es/storage/session";
 
 const rootReducer = combineReducers({
 	tool: toolReducer,
@@ -14,7 +14,7 @@ const rootReducer = combineReducers({
 
 const persistConfig = {
 	key: "root",
-	storage: browserStorage, // replace localStorage -> extension storage ( eg.chrome.storage )
+	storage: sessionStorage,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
