@@ -7,9 +7,13 @@ export class PenToolCanvas {
 
 	private currentStroke: Stroke | null = null;
 	private strokes: Stroke[] = [];
-	private undoRedoStack: Stroke[] = [];
+	private redoStack: Stroke[] = [];
+	private isEnabled: boolean = false;
 
 	private options: PenToolOptions;
+	private listener:
+		| ((message: any, sender: any, sendResponse: any) => void)
+		| null = null;
 
 	constructor(options: PenToolOptions = {}) {
 		this.options = {
@@ -20,7 +24,27 @@ export class PenToolCanvas {
 		};
 	}
 
+	private setupMessageListener() {
+		// Bind 'this' context to the listener
+		this.listener = this.handleRuntimeMessage.bind(this);
+		browser.runtime.onMessage.addListener(this.listener);
+	}
+
+	private handleRuntimeMessage = (message: any) => {
+		if (message.tool === "pen" && message.action === "redraw_strokes") {
+			console.log("received action : redraw_strokes");
+			const storedStrokes = message.payload;
+			if (storedStrokes) {
+				console.log("Redrawing with stored strokes:", storedStrokes);
+				this.strokes = storedStrokes.map((s: any) => JSON.parse(s));
+			}
+			this.redraw();
+		}
+		return false;
+	};
+
 	public enable() {
+		this.isEnabled = true;
 		this.canvas = document.createElement("canvas");
 		this.canvas.id = "penToolCanvas";
 
@@ -47,14 +71,22 @@ export class PenToolCanvas {
 		this.ctx.strokeStyle = this.options.color!;
 		this.ctx.lineWidth = this.options.lineWidth!;
 		this.ctx.lineCap = this.options.lineCap!;
+
 		if (this.strokes.length > 0) {
 			this.redraw();
 		}
+
+		this.setupMessageListener();
 	}
 
 	public disable() {
 		// Note: We only clear the canvas not the strokes here to allow paint after re-enabling
 		if (!this.canvas) return;
+		const existingCanvas = document.querySelector("#penToolCanvas");
+		if (existingCanvas) {
+			console.log("⚠️ FOUND EXISTING CANVAS! Removing it first");
+			existingCanvas.remove();
+		}
 		console.log("Disabling pen tool");
 		this.removeEventListeners();
 		this.canvas.style.cursor = "default";
@@ -62,6 +94,7 @@ export class PenToolCanvas {
 		this.canvas = null;
 		this.ctx = null;
 		this.drawing = false;
+		this.listener = null;
 	}
 
 	private addEventListeners() {
@@ -103,8 +136,13 @@ export class PenToolCanvas {
 	private onMouseUp = (e: MouseEvent) => {
 		if (this.currentStroke) {
 			this.strokes.push(this.currentStroke);
+			browser.runtime.sendMessage({
+				tool: "pen",
+				type: "add_stroke",
+				payload: JSON.stringify(this.currentStroke),
+			});
 			this.currentStroke = null;
-			this.undoRedoStack = [];
+			this.redoStack = [];
 		}
 
 		this.drawing = false;
@@ -144,20 +182,20 @@ export class PenToolCanvas {
 	public undo() {
 		if (this.strokes.length === 0) return;
 		const stroke = this.strokes.pop()!;
-		this.undoRedoStack.push(stroke);
+		this.redoStack.push(stroke);
 		this.redraw();
 	}
 
 	public redo() {
 		if (this.strokes.length === 0) return;
-		const stroke = this.undoRedoStack.pop()!;
+		const stroke = this.redoStack.pop()!;
 		this.strokes.push(stroke);
 		this.redraw();
 	}
 
 	public clear() {
 		this.strokes = [];
-		this.undoRedoStack = [];
+		this.redoStack = [];
 		this.redraw();
 	}
 
@@ -165,6 +203,14 @@ export class PenToolCanvas {
 		this.options.color = color;
 		if (this.ctx) {
 			this.ctx.strokeStyle = color;
+		}
+	}
+
+	// Clean up when instance is destroyed
+	public destroy() {
+		if (this.listener) {
+			browser.runtime.onMessage.removeListener(this.listener);
+			this.listener = null;
 		}
 	}
 }

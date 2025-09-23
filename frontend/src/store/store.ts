@@ -4,12 +4,14 @@ import { persistReducer, persistStore } from "redux-persist";
 import toolReducer from "./slices/toolSlice";
 import sidePanelReducer from "./slices/sidePanelSlice";
 import highlighterReducer from "./slices/highlighterSlice";
+import penReducer from "./slices/penSlice";
 import sessionStorage from "redux-persist/es/storage/session";
 
 const rootReducer = combineReducers({
 	tool: toolReducer,
 	sidePanel: sidePanelReducer,
 	highlighter: highlighterReducer,
+	pen: penReducer,
 });
 
 const persistConfig = {

@@ -11,3 +11,5 @@ export const highlighterColors = [
 	"#DBEAFE", // Light Blue - good contrast
 	"#FCE7F3", // Light Pink - accessible
 ];
+
+export const penColors = ["red", "blue", "yellow", "green"];

@@ -9,6 +9,9 @@ import { Switch } from "@/components/ui/switch";
 import { PenToolCanvas } from "./PenTool";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveTool } from "@/store/slices/toolSlice";
+import { penColors } from "@/lib/utils";
+import { addPenStroke, updatePenColor } from "@/store/slices/penSlice";
+import { store } from "@/store/store";
 
 let penTool: PenToolCanvas | null = null;
 
@@ -42,12 +45,14 @@ export const updatePenToolColor = (color: string) => {
 
 const PenTool = () => {
 	const dispatch = useDispatch();
+
 	const activeTool = useSelector((state: any) => state.tool.activeTool);
 	const penEnabled = activeTool === "pen";
 
-	const penColors = ["red", "blue", "yellow", "green"];
+	const defaultPenColor = useSelector((state: any) => state.pen.color);
+	const [selectedPenColor, setSelectedPenColor] = useState(defaultPenColor);
 
-	const [selectedPenColor, setSelectedPenColor] = useState(penColors[0]);
+	const storedStrokes = store.getState().pen.penStrokes;
 
 	useEffect(() => {
 		browser.runtime.sendMessage({
@@ -65,8 +70,38 @@ const PenTool = () => {
 					color: selectedPenColor,
 				},
 			});
+			dispatch(updatePenColor(selectedPenColor));
 		}
 	}, [selectedPenColor, penEnabled]);
+
+	useEffect(() => {
+		if (storedStrokes.length > 0) {
+			console.log("redraw_strokes action called");
+			browser.runtime.sendMessage({
+				tool: "pen",
+				action: "redraw_strokes",
+				payload: storedStrokes,
+			});
+		}
+		let lastPayload: any = null;
+		const listener = (message: any) => {
+			if (message.tool === "pen" && message.type === "add_stroke") {
+				const activeTabId = message.activeTabId;
+				const senderTabId = message.senderTabId;
+
+				if (typeof activeTabId !== "number" || typeof senderTabId !== "number")
+					return;
+				if (activeTabId !== senderTabId) return;
+				if (message.payload === lastPayload) return;
+
+				lastPayload = message.payload;
+				dispatch(addPenStroke(lastPayload));
+			}
+		};
+
+		browser.runtime.onMessage.addListener(listener);
+		return () => browser.runtime.onMessage.removeListener(listener);
+	}, []);
 
 	function sendUndoRedoMessage(action: "undo" | "redo") {
 		console.log(`Sending ${action} message`);

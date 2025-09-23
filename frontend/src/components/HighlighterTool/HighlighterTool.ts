@@ -14,14 +14,12 @@ export class HighlighterToolService {
 		if (this.enabled) return;
 		this.enabled = true;
 		document.addEventListener("mouseup", this.handlePaintSelectionEvent);
-		console.log("Highlighter enabled");
 	}
 
 	public disable() {
 		if (!this.enabled) return;
 		this.enabled = false;
 		document.removeEventListener("mouseup", this.handlePaintSelectionEvent);
-		console.log("Highlighter disabled");
 	}
 
 	public setColor(color: string) {

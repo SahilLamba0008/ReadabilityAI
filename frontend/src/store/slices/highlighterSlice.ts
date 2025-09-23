@@ -20,7 +20,7 @@ const highlighterSlice = createSlice({
 	name: "highlighter",
 	initialState,
 	reducers: {
-		updateColor: (state, action) => {
+		updateHighlighterColor: (state, action) => {
 			state.color = action.payload;
 		},
 		addHighlight: (state, action) => {
@@ -50,7 +50,7 @@ const highlighterSlice = createSlice({
 });
 
 export const {
-	updateColor,
+	updateHighlighterColor,
 	addHighlight,
 	undoHighlight,
 	redoHighlight,

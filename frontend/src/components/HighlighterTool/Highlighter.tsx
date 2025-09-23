@@ -9,7 +9,10 @@ import {
 import { HighlighterToolService } from "./HighlighterTool";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveTool } from "@/store/slices/toolSlice";
-import { addHighlight, updateColor } from "@/store/slices/highlighterSlice";
+import {
+	addHighlight,
+	updateHighlighterColor,
+} from "@/store/slices/highlighterSlice";
 import { highlighterColors } from "@/lib/utils";
 
 let highlighterTool: HighlighterToolService | null = null;
@@ -45,6 +48,10 @@ export const ClearHighlighterToolStrokes = () => {
 const HighlighterTool = () => {
 	const dispatch = useDispatch();
 	const activeTool = useSelector((state: any) => state.tool.activeTool);
+	const storeHighlightsArray: Highlight[] = useSelector(
+		(state: any) => state.highlighter.highlights
+	);
+
 	const highlighterEnabled = activeTool === "highlighter";
 
 	const selectedHighlighterColor = useSelector(
@@ -67,12 +74,11 @@ const HighlighterTool = () => {
 					color: selectedHighlighterColor,
 				},
 			});
+			dispatch(updateHighlighterColor(selectedHighlighterColor));
 		}
 	}, [selectedHighlighterColor, highlighterEnabled]);
 
 	useEffect(() => {
-		let lastPayload: any = null;
-
 		const listener = (message: any) => {
 			if (message.tool === "highlighter" && message.type === "add_highlight") {
 				const activeTabId = message.activeTabId;
@@ -82,10 +88,11 @@ const HighlighterTool = () => {
 					return;
 				if (activeTabId !== senderTabId) return;
 
-				if (JSON.stringify(message.payload) === JSON.stringify(lastPayload))
-					return;
-
-				lastPayload = message.payload;
+				const payloadHighlightText = message.payload?.text;
+				const duplicateHighlightText = storeHighlightsArray?.find(
+					(highlight: any) => highlight.text === payloadHighlightText
+				);
+				if (duplicateHighlightText) return; // don't add duplicate highlights
 
 				dispatch(addHighlight(message.payload));
 			}
@@ -142,7 +149,6 @@ const HighlighterTool = () => {
 										: "border-gray-300"
 								}`}
 								style={{ backgroundColor: color }}
-								onClick={() => dispatch(updateColor(color))}
 							/>
 						))}
 					</div>
