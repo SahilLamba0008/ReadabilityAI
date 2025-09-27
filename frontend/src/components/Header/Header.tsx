@@ -40,21 +40,21 @@ const Header = () => {
 			</div>
 
 			<div className="flex items-center gap-1">
-				<Button
+				{/* <Button
 					variant="ghost"
 					size="sm"
 					className={"w-8 h-8 p-0 hover:bg-accent"}
 				>
 					{false ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-				</Button>
+				</Button> */}
 
-				<Button
+				{/* <Button
 					variant="ghost"
 					size="sm"
 					className={"w-8 h-8 p-0 hover:bg-accent"}
 				>
 					<Settings className="w-4 h-4" />
-				</Button>
+				</Button> */}
 
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>

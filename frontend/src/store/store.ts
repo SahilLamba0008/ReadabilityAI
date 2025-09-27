@@ -2,9 +2,10 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 
 import toolReducer from "./slices/toolSlice";
-import sidePanelReducer from "./slices/sidePanelSlice";
+import sidePanelReducer from "./slices/sidepanelSlice";
 import highlighterReducer from "./slices/highlighterSlice";
 import penReducer from "./slices/penSlice";
+import authReducer from "./slices/authSlice";
 import sessionStorage from "redux-persist/es/storage/session";
 
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
 	sidePanel: sidePanelReducer,
 	highlighter: highlighterReducer,
 	pen: penReducer,
+	auth: authReducer,
 });
 
 const persistConfig = {
