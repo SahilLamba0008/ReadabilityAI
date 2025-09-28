@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { summarizeContent } from "../controllers/summarize-content";
+import { summarizeContent } from "../controllers/summarize/summarize-content";
 
 const router = Router();
 
