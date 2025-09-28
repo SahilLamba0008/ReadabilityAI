@@ -26,3 +26,6 @@ web-ext.config.ts
 *.sw?
 
 .vscode
+
+# environment variables
+.env

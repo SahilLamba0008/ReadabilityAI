@@ -14,7 +14,7 @@ import { RefreshCw } from "lucide-react";
 import "~/assets/global.css";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { persistorStore, store } from "@/store/store";
-import { togglePanel } from "@/store/slices/sidePanelSlice";
+import { togglePanel } from "@/store/slices/sidepanelSlice";
 import { PersistGate } from "redux-persist/integration/react";
 
 function SidePanelApp() {

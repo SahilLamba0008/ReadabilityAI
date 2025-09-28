@@ -21,7 +21,12 @@ import "~/assets/global.css";
 let sidePanelIframe: HTMLIFrameElement | null = null;
 
 export default defineContentScript({
-	matches: ["https://medium.com/*/*", "https://leetcode.com/*/*/"],
+	matches: [
+		"https://medium.com/*",
+		"https://*.medium.com/*",
+		"https://leetcode.com/*",
+		"https://*.leetcode.com/*",
+	],
 	cssInjectionMode: "ui",
 
 	async main(ctx) {
@@ -34,7 +39,9 @@ export default defineContentScript({
 							action: string;
 							tool?: string;
 							payload?: { isOpen: boolean };
-					  }
+					  },
+				sender,
+				sendResponse
 			) => {
 				console.log("Content script received message:", message);
 
@@ -86,6 +93,14 @@ export default defineContentScript({
 				if (message.action === "toggleSidepanel" && sidePanelIframe) {
 					sidePanelIframe.style.right =
 						message.payload?.isOpen === false ? "-315px" : "0px";
+				}
+
+				if (message.action === "get_url") {
+					const currentPageUrl = window.location.href;
+					browser.runtime.sendMessage({
+						action: "url_fetched",
+						payload: { url: currentPageUrl },
+					});
 				}
 			}
 		);

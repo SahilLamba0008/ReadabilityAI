@@ -8,18 +8,23 @@ import React from "react";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Spinner } from "../ui/shadcn-io/spinner";
+import useMutation from "@/hooks/useMutation";
+import MarkdownRenderer from "../ui/reactMarkdown";
+
+type SummarizeResponse = {
+	summarizedContent: string;
+	// add other properties if needed
+};
 
 const SummarizeButton = () => {
-	const mockSummaryPoints = [
-		"The article discusses the fundamentals of artificial intelligence and machine learning",
-		"Key concepts include neural networks, deep learning, and data processing techniques",
-		"Practical applications in various industries are highlighted with real-world examples",
-		"Future trends and developments in AI technology are explored in detail",
-	];
 	const [isSummaryOpen, setIsSummaryOpen] = React.useState(false);
-	const { data, loading, error, fetchData } = useFetch(
-		"https://dummyjson.com/todos"
-	);
+	// const { data, loading, error, fetchData } = useFetch(
+	// 	"http://localhost:8080/api/summarize"
+	// );
+	const { data, loading, error, mutate } = useMutation({
+		method: "POST",
+		route: "/summarize",
+	});
 
 	return (
 		<div>
@@ -29,8 +34,20 @@ const SummarizeButton = () => {
 					<div className="flex">
 						<Button
 							className="h-10 flex-1 rounded-r-none bg-gradient-to-r from-slate-600 to-slate-800 hover:from-slate-700 hover:to-slate-900"
-							onClick={() => {
-								fetchData();
+							onClick={async () => {
+								console.log("Summarize button clicked");
+								browser.runtime.sendMessage({ action: "get_url" });
+								browser.runtime.onMessage.addListener(
+									(message: { action: string; payload: { url: string } }) => {
+										if (message.action === "url_fetched") {
+											console.log(
+												"URL fetched in side panel:",
+												message.payload.url
+											);
+											mutate({ url: message.payload.url });
+										}
+									}
+								);
 								setIsSummaryOpen(true);
 							}}
 						>
@@ -75,18 +92,11 @@ const SummarizeButton = () => {
 										{data ? "Page Summary" : "No Summary Available"}
 									</h4>
 									<div className="space-y-2">
-										{data
-											? data.todos
-													?.slice(0, 3)
-													.map((todo: any, index: number) => (
-														<div key={index} className="flex items-start gap-2">
-															<div className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-slate-600" />
-															<p className="text-sm leading-relaxed text-muted-foreground">
-																{todo.todo} {todo.completed ? "✅" : "⏳"}
-															</p>
-														</div>
-													))
-											: "Click on Summarize Page button to get the page summary."}
+										{data ? (
+											<MarkdownRenderer content={data.summarizedContent} />
+										) : (
+											"Click on Summarize Page button to get the page summary."
+										)}
 									</div>
 								</>
 							)}

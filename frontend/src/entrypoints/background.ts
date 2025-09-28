@@ -9,13 +9,22 @@ export default defineBackground(() => {
 			const activeTabId = tabs[0]?.id;
 			const senderTabId = sender.tab?.id;
 
-			if (sender.tab?.id) {
-				browser.tabs.sendMessage(sender.tab.id, {
-					...message,
-					senderTabId,
-					activeTabId,
-				});
+			if (senderTabId) {
+				try {
+					const response = await browser.tabs.sendMessage(senderTabId, {
+						...message,
+						senderTabId,
+						activeTabId,
+					});
+
+					console.log("Background received response:", response, senderTabId);
+
+					sendResponse(response);
+				} catch (error) {
+					sendResponse({ error: "Failed to get response from content script" });
+				}
 			}
+			return true;
 		}
 	);
 });
