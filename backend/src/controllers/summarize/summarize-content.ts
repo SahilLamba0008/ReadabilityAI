@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { fetchDOMWithPuppeteer } from "../puppeteer/fetch-dom";
-import { parseDOMWithReadability } from "../utils/readability";
-import { llmSummarize } from "../llm/ai-client";
+import { fetchDOMWithPuppeteer } from "../../puppeteer/fetch-dom";
+import { parseDOMWithReadability } from "../../utils/readability";
+import { llmSummarize } from "../../llm/ai-client";
 
 export const summarizeContent = async (req: Request, res: Response) => {
 	try {
