@@ -149,6 +149,9 @@ const HighlighterTool = () => {
 										: "border-gray-300"
 								}`}
 								style={{ backgroundColor: color }}
+								onClick={() => {
+									dispatch(updateHighlighterColor(color));
+								}}
 							/>
 						))}
 					</div>

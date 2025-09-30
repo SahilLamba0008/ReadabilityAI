@@ -36,15 +36,18 @@ export class HighlighterToolService {
 
 		let range = null;
 		let text = null;
+		let color = null;
+
 		if (highlight) {
-			// override with provided highlight if present
 			range = highlight.range;
 			text = highlight.text;
-			this.color = highlight.color;
+			color = highlight.color;
 		} else {
 			range = selection?.getRangeAt(0);
 			text = selection?.toString();
+			color = this.color;
 		}
+
 		if (!range || !text) return; // No selection and no highlight provided
 		if (!text.trim()) return;
 
@@ -90,7 +93,7 @@ export class HighlighterToolService {
 				}
 
 				const span = document.createElement("span");
-				span.style.backgroundColor = this.color;
+				span.style.backgroundColor = color;
 				span.setAttribute("data-highlight-id", highlightId);
 
 				nodeRange.surroundContents(span);
@@ -101,7 +104,7 @@ export class HighlighterToolService {
 		const newHighlight: Highlight = {
 			id: highlightId,
 			text,
-			color: this.color,
+			color,
 			range,
 			spans,
 		};
@@ -109,7 +112,7 @@ export class HighlighterToolService {
 
 		const storeHighlight: StoreHighlight = {
 			id: highlightId,
-			color: this.color,
+			color,
 			text,
 		};
 
