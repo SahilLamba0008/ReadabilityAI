@@ -13,24 +13,24 @@ export class HighlighterToolService {
 	public enable() {
 		if (this.enabled) return;
 		this.enabled = true;
-		document.addEventListener("mouseup", this.handlePaintSelectionEvent);
+		document.addEventListener("mouseup", this.handleHighlightSelectionEvent);
 	}
 
 	public disable() {
 		if (!this.enabled) return;
 		this.enabled = false;
-		document.removeEventListener("mouseup", this.handlePaintSelectionEvent);
+		document.removeEventListener("mouseup", this.handleHighlightSelectionEvent);
 	}
 
 	public setColor(color: string) {
 		this.color = color;
 	}
 
-	private handlePaintSelectionEvent = (_event: MouseEvent) => {
-		this.paintSelection();
+	private handleHighlightSelectionEvent = (_event: MouseEvent) => {
+		this.highlightSelection();
 	};
 
-	private paintSelection = (highlight?: Highlight) => {
+	private highlightSelection = (highlight?: Highlight) => {
 		const selection = window.getSelection();
 		if (selection?.isCollapsed) return; // In case of highlight params, selection would be undefined
 
@@ -125,8 +125,9 @@ export class HighlighterToolService {
 		selection?.removeAllRanges();
 	};
 
-	private removeHighlight = (index: number) => {
-		if (index < 0 || index >= this.highlights.length) return;
+	private removeHighlight = (highlightId: string) => {
+		const index = this.highlights.findIndex((h) => h.id === highlightId);
+		if (index === -1) return;
 
 		const highlight = this.highlights[index];
 
@@ -146,7 +147,8 @@ export class HighlighterToolService {
 
 	public undo() {
 		if (this.highlights.length === 0) return;
-		this.removeHighlight(this.highlights.length - 1);
+		const lastHighlightId = this.highlights[this.highlights.length - 1].id;
+		this.removeHighlight(lastHighlightId);
 		const undoneHighlight = this.highlights.pop()!;
 		this.redoStack.push(undoneHighlight);
 	}
@@ -156,13 +158,17 @@ export class HighlighterToolService {
 			return;
 		}
 		const highlight = this.redoStack.pop()!;
-		this.paintSelection(highlight);
+		this.highlightSelection(highlight);
+		this.highlights.push(highlight);
 	}
 
 	public clearAll() {
 		while (this.highlights.length > 0) {
-			this.removeHighlight(this.highlights.length - 1);
+			const lastHighlightId = this.highlights[this.highlights.length - 1].id;
+			this.removeHighlight(lastHighlightId);
 			this.highlights.pop();
 		}
+		this.redoStack = [];
+		this.highlights = [];
 	}
 }

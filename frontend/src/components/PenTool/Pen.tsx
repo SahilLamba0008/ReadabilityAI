@@ -36,7 +36,6 @@ export const redoPenToolStroke = () => {
 
 export const clearPenToolStrokes = () => {
 	penTool?.clear();
-	penTool = null;
 };
 
 export const updatePenToolColor = (color: string) => {

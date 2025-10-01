@@ -36,18 +36,18 @@ const SummarizeButton = () => {
 							className="h-10 flex-1 rounded-r-none bg-gradient-to-r from-slate-600 to-slate-800 hover:from-slate-700 hover:to-slate-900"
 							onClick={async () => {
 								console.log("Summarize button clicked");
-								browser.runtime.sendMessage({ action: "get_url" });
-								browser.runtime.onMessage.addListener(
-									(message: { action: string; payload: { url: string } }) => {
-										if (message.action === "url_fetched") {
-											console.log(
-												"URL fetched in side panel:",
-												message.payload.url
-											);
-											mutate({ url: message.payload.url });
-										}
-									}
-								);
+								// browser.runtime.sendMessage({ action: "get_url" });
+								// browser.runtime.onMessage.addListener(
+								// 	(message: { action: string; payload: { url: string } }) => {
+								// 		if (message.action === "url_fetched") {
+								// 			console.log(
+								// 				"URL fetched in side panel:",
+								// 				message.payload.url
+								// 			);
+								// 			mutate({ url: message.payload.url });
+								// 		}
+								// 	}
+								// );
 								setIsSummaryOpen(true);
 							}}
 						>

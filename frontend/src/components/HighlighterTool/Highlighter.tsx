@@ -42,7 +42,6 @@ export const RedoHighlighterToolStroke = () => {
 
 export const ClearHighlighterToolStrokes = () => {
 	highlighterTool?.clearAll();
-	highlighterTool = null;
 };
 
 const HighlighterTool = () => {
@@ -202,7 +201,7 @@ const HighlighterTool = () => {
 								</Button>
 							</TooltipTrigger>
 							<TooltipContent>
-								<p>Delete all highlights and strokes</p>
+								<p>Delete all highlights</p>
 							</TooltipContent>
 						</Tooltip>
 					</div>
