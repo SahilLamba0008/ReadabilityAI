@@ -95,13 +95,13 @@ export default defineContentScript({
 						message.payload?.isOpen === false ? "-315px" : "0px";
 				}
 
-				if (message.action === "get_url") {
-					const currentPageUrl = window.location.href;
-					browser.runtime.sendMessage({
-						action: "url_fetched",
-						payload: { url: currentPageUrl },
-					});
-				}
+				// if (message.action === "get_url") {
+				// 	const currentPageUrl = window.location.href;
+				// 	browser.runtime.sendMessage({
+				// 		action: "url_fetched",
+				// 		payload: { url: currentPageUrl },
+				// 	});
+				// }
 			}
 		);
 	},

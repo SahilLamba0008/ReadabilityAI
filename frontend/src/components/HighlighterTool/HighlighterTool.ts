@@ -13,24 +13,24 @@ export class HighlighterToolService {
 	public enable() {
 		if (this.enabled) return;
 		this.enabled = true;
-		document.addEventListener("mouseup", this.handlePaintSelectionEvent);
+		document.addEventListener("mouseup", this.handleHighlightSelectionEvent);
 	}
 
 	public disable() {
 		if (!this.enabled) return;
 		this.enabled = false;
-		document.removeEventListener("mouseup", this.handlePaintSelectionEvent);
+		document.removeEventListener("mouseup", this.handleHighlightSelectionEvent);
 	}
 
 	public setColor(color: string) {
 		this.color = color;
 	}
 
-	private handlePaintSelectionEvent = (_event: MouseEvent) => {
-		this.paintSelection();
+	private handleHighlightSelectionEvent = (_event: MouseEvent) => {
+		this.highlightSelection();
 	};
 
-	private paintSelection = (highlight?: Highlight) => {
+	private highlightSelection = (highlight?: Highlight) => {
 		const selection = window.getSelection();
 		if (selection?.isCollapsed) return; // In case of highlight params, selection would be undefined
 
@@ -156,7 +156,7 @@ export class HighlighterToolService {
 			return;
 		}
 		const highlight = this.redoStack.pop()!;
-		this.paintSelection(highlight);
+		this.highlightSelection(highlight);
 	}
 
 	public clearAll() {
