@@ -125,8 +125,9 @@ export class HighlighterToolService {
 		selection?.removeAllRanges();
 	};
 
-	private removeHighlight = (index: number) => {
-		if (index < 0 || index >= this.highlights.length) return;
+	private removeHighlight = (highlightId: string) => {
+		const index = this.highlights.findIndex((h) => h.id === highlightId);
+		if (index === -1) return;
 
 		const highlight = this.highlights[index];
 
@@ -146,7 +147,8 @@ export class HighlighterToolService {
 
 	public undo() {
 		if (this.highlights.length === 0) return;
-		this.removeHighlight(this.highlights.length - 1);
+		const lastHighlightId = this.highlights[this.highlights.length - 1].id;
+		this.removeHighlight(lastHighlightId);
 		const undoneHighlight = this.highlights.pop()!;
 		this.redoStack.push(undoneHighlight);
 	}
@@ -157,12 +159,16 @@ export class HighlighterToolService {
 		}
 		const highlight = this.redoStack.pop()!;
 		this.highlightSelection(highlight);
+		this.highlights.push(highlight);
 	}
 
 	public clearAll() {
 		while (this.highlights.length > 0) {
-			this.removeHighlight(this.highlights.length - 1);
+			const lastHighlightId = this.highlights[this.highlights.length - 1].id;
+			this.removeHighlight(lastHighlightId);
 			this.highlights.pop();
 		}
+		this.redoStack = [];
+		this.highlights = [];
 	}
 }
