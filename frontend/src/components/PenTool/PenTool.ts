@@ -49,11 +49,11 @@ export class PenToolCanvas {
 		this.canvas.id = "penToolCanvas";
 
 		this.canvas.style.position = "absolute";
-		this.canvas.style.width = "100%";
-		this.canvas.style.height = `${document.documentElement.scrollHeight}px`;
 
-		this.canvas.width = window.innerWidth;
+		this.canvas.width = document.documentElement.scrollWidth;
 		this.canvas.height = document.documentElement.scrollHeight;
+		this.canvas.style.width = `${document.documentElement.scrollWidth}px`;
+		this.canvas.style.height = `${document.documentElement.scrollHeight}px`;
 
 		this.canvas.style.top = "0";
 		this.canvas.style.right = "0";
@@ -127,7 +127,10 @@ export class PenToolCanvas {
 	private onMouseMove = (e: MouseEvent) => {
 		if (!this.ctx || !this.drawing || !this.currentStroke) return;
 
-		const point = { x: e.clientX, y: e.clientY + window.scrollY };
+		const point = {
+			x: e.clientX + window.scrollX,
+			y: e.clientY + window.scrollY,
+		};
 		this.currentStroke.points.push(point);
 
 		this.redraw();
