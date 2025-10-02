@@ -27,9 +27,11 @@ export type Highlight = {
 	text: string;
 	color: string;
 	range: Range;
-	spans: HTMLSpanElement[];
-	page?: string;
+	page: string;
 	title?: string;
 };
 
-export type StoreHighlight = Pick<Highlight, "id" | "text" | "color" | "title">;
+export type StoreHighlight = Pick<
+	Highlight,
+	"id" | "text" | "color" | "title" | "page"
+>;

@@ -52,7 +52,6 @@ export class HighlighterToolService {
 		if (!text.trim()) return;
 
 		const highlightId = highlight ? highlight.id : crypto.randomUUID();
-		const spans: HTMLSpanElement[] = [];
 
 		// Find all text nodes within the range
 		const walker = document.createTreeWalker(
@@ -72,13 +71,13 @@ export class HighlighterToolService {
 		}
 		// If selection is within a single text node
 		if (textNodes.length === 0) {
-			const span = document.createElement("span");
-			span.style.backgroundColor = this.color;
-			span.setAttribute("data-highlight-id", highlightId);
+			const highlight = document.createElement("highlight");
+			highlight.style.backgroundColor = this.color;
+			highlight.setAttribute("data-highlight-id", highlightId);
 
-			range.surroundContents(span);
-			spans.push(span);
-			if (highlight) console.log("Created span for single text node :", span);
+			range.surroundContents(highlight);
+			if (highlight)
+				console.log("Created highlight for single text node :", highlight);
 		} else {
 			// Highlight each intersecting text node
 			textNodes.forEach((node) => {
@@ -92,12 +91,11 @@ export class HighlighterToolService {
 					nodeRange.setEnd(range.endContainer, range.endOffset);
 				}
 
-				const span = document.createElement("span");
-				span.style.backgroundColor = color;
-				span.setAttribute("data-highlight-id", highlightId);
+				const highlight = document.createElement("highlight");
+				highlight.style.backgroundColor = color;
+				highlight.setAttribute("data-highlight-id", highlightId);
 
-				nodeRange.surroundContents(span);
-				spans.push(span);
+				nodeRange.surroundContents(highlight);
 			});
 		}
 
@@ -106,7 +104,7 @@ export class HighlighterToolService {
 			text,
 			color,
 			range,
-			spans,
+			page: window.location.href,
 		};
 		this.highlights.push(newHighlight);
 
@@ -114,6 +112,7 @@ export class HighlighterToolService {
 			id: highlightId,
 			color,
 			text,
+			page: window.location.href,
 		};
 
 		browser.runtime.sendMessage({
@@ -126,21 +125,23 @@ export class HighlighterToolService {
 	};
 
 	private removeHighlight = (highlightId: string) => {
-		const index = this.highlights.findIndex((h) => h.id === highlightId);
-		if (index === -1) return;
+		const highlights = document.querySelectorAll<HTMLElement>(
+			`highlight[data-highlight-id="${highlightId}"]`
+		);
 
-		const highlight = this.highlights[index];
+		if (highlights.length === 0) {
+			console.warn(`No highlights found for highlightId: ${highlightId}`);
+			return;
+		}
 
-		highlight.spans.forEach((span: HTMLSpanElement) => {
-			const parent = span.parentNode;
+		highlights.forEach((highlight) => {
+			const parent = highlight.parentNode;
 			if (!parent) return;
 
-			while (span.firstChild) {
-				parent.insertBefore(span.firstChild, span);
+			while (highlight.firstChild) {
+				parent.insertBefore(highlight.firstChild, highlight);
 			}
-			parent.removeChild(span);
-
-			// Normalize to merge text nodes back together
+			parent.removeChild(highlight);
 			parent.normalize();
 		});
 	};
