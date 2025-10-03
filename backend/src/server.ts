@@ -10,7 +10,11 @@ const PORT = process.env.PORT || 8080;
 app.use(express.json());
 
 app.use("/api/summarize", summarizeRoutes);
-app.use("/api/auth", authRoutes);
+/*
+	Migrating supabase client to frontend, using the hybrid approach
+	so commenting out auth routes for now
+*/
+// app.use("/api/auth", authRoutes);
 
 app.listen(PORT, () => {
 	console.log(`Server is running at http://localhost:${PORT}`);
