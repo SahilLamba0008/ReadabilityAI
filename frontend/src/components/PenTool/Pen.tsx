@@ -42,6 +42,11 @@ export const updatePenToolColor = (color: string) => {
 	penTool?.setColor(color);
 };
 
+export const repaintHistoryStrokes = (strokes: []) => {
+	console.log("Repainting history strokes from cs payload:", strokes);
+	penTool?.loadStrokes(strokes);
+};
+
 const PenTool = () => {
 	const dispatch = useDispatch();
 
@@ -95,6 +100,14 @@ const PenTool = () => {
 
 				lastPayload = message.payload;
 				dispatch(addPenStroke(lastPayload));
+			}
+			if (message.tool === "pen") {
+				if (message.type === "clear_all_strokes")
+					dispatch({ type: "pen/clearPenStrokes" });
+				if (message.type === "undo_last_stroke")
+					dispatch({ type: "pen/undoPenStroke" }); // emitting duplicate event due to strict mode
+				if (message.type === "redo_last_stroke")
+					dispatch({ type: "pen/redoPenStroke" });
 			}
 		};
 

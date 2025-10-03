@@ -14,6 +14,7 @@ import {
 	redoPenToolStroke,
 	undoPenToolStroke,
 	updatePenToolColor,
+	repaintHistoryStrokes,
 } from "@/components/PenTool";
 import { ToolCommandMessage } from "@/lib/types";
 import "~/assets/global.css";
@@ -38,7 +39,7 @@ export default defineContentScript({
 					| {
 							action: string;
 							tool?: string;
-							payload?: { isOpen: boolean };
+							payload?: { isOpen: boolean } | any;
 					  },
 				sender,
 				sendResponse
@@ -64,6 +65,9 @@ export default defineContentScript({
 							break;
 						case "updateColor":
 							updatePenToolColor(message.payload.color);
+							break;
+						case "repaintHistoryStrokes":
+							repaintHistoryStrokes(message.payload);
 							break;
 					}
 				}

@@ -1,10 +1,11 @@
+import { Stroke } from "@/lib/types";
 import { penColors } from "@/lib/utils";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface PenState {
 	color: string;
-	penStrokes: string[];
-	redoStack: string[];
+	penStrokes: Stroke[];
+	redoStack: Stroke[];
 }
 
 const initialState: PenState = {

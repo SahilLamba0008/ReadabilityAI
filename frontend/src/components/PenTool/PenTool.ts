@@ -8,7 +8,6 @@ export class PenToolCanvas {
 	private currentStroke: Stroke | null = null;
 	private strokes: Stroke[] = [];
 	private redoStack: Stroke[] = [];
-	private isEnabled: boolean = false;
 
 	private options: PenToolOptions;
 	private listener:
@@ -24,27 +23,7 @@ export class PenToolCanvas {
 		};
 	}
 
-	private setupMessageListener() {
-		// Bind 'this' context to the listener
-		this.listener = this.handleRuntimeMessage.bind(this);
-		browser.runtime.onMessage.addListener(this.listener);
-	}
-
-	private handleRuntimeMessage = (message: any) => {
-		if (message.tool === "pen" && message.action === "redraw_strokes") {
-			console.log("received action : redraw_strokes");
-			const storedStrokes = message.payload;
-			if (storedStrokes) {
-				console.log("Redrawing with stored strokes:", storedStrokes);
-				this.strokes = storedStrokes.map((s: any) => JSON.parse(s));
-			}
-			this.redraw();
-		}
-		return false;
-	};
-
 	public enable() {
-		this.isEnabled = true;
 		this.canvas = document.createElement("canvas");
 		this.canvas.id = "penToolCanvas";
 
@@ -75,8 +54,6 @@ export class PenToolCanvas {
 		if (this.strokes.length > 0) {
 			this.redraw();
 		}
-
-		this.setupMessageListener();
 	}
 
 	public disable() {
@@ -142,7 +119,7 @@ export class PenToolCanvas {
 			browser.runtime.sendMessage({
 				tool: "pen",
 				type: "add_stroke",
-				payload: JSON.stringify(this.currentStroke),
+				payload: this.currentStroke,
 			});
 			this.currentStroke = null;
 			this.redoStack = [];
@@ -154,6 +131,11 @@ export class PenToolCanvas {
 	private onMouseLeave = () => {
 		this.drawing = false;
 	};
+
+	public loadStrokes(strokes: Stroke[]) {
+		this.strokes = strokes;
+		this.redraw();
+	}
 
 	private redraw() {
 		if (!this.ctx || !this.canvas) return;
@@ -187,6 +169,10 @@ export class PenToolCanvas {
 		const stroke = this.strokes.pop()!;
 		this.redoStack.push(stroke);
 		this.redraw();
+		browser.runtime.sendMessage({
+			tool: "pen",
+			type: "undo_last_stroke",
+		});
 	}
 
 	public redo() {
@@ -194,26 +180,26 @@ export class PenToolCanvas {
 		const stroke = this.redoStack.pop()!;
 		this.strokes.push(stroke);
 		this.redraw();
+		browser.runtime.sendMessage({
+			tool: "pen",
+			type: "redo_last_stroke",
+		});
 	}
 
 	public clear() {
 		this.strokes = [];
 		this.redoStack = [];
 		this.redraw();
+		browser.runtime.sendMessage({
+			tool: "pen",
+			type: "clear_all_strokes",
+		});
 	}
 
 	public setColor(color: string) {
 		this.options.color = color;
 		if (this.ctx) {
 			this.ctx.strokeStyle = color;
-		}
-	}
-
-	// Clean up when instance is destroyed
-	public destroy() {
-		if (this.listener) {
-			browser.runtime.onMessage.removeListener(this.listener);
-			this.listener = null;
 		}
 	}
 }

@@ -6,4 +6,5 @@ export {
 	redoPenToolStroke,
 	clearPenToolStrokes,
 	updatePenToolColor,
+	repaintHistoryStrokes,
 } from "./Pen";

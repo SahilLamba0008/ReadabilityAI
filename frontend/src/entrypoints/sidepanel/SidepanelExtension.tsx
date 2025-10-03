@@ -20,6 +20,7 @@ import { PersistGate } from "redux-persist/integration/react";
 function SidePanelApp() {
 	const dispatch = useDispatch();
 	const isOpen = useSelector((state: any) => state.sidePanel.isOpen);
+	const penToolStrokes = useSelector((state: any) => state.pen.penStrokes);
 
 	const handleClick = () => {
 		dispatch(togglePanel());
@@ -31,6 +32,14 @@ function SidePanelApp() {
 			payload: { isOpen: isOpen },
 		});
 	}, [isOpen]);
+
+	const paintHistoryStrokes = () => {
+		browser.runtime.sendMessage({
+			tool: "pen",
+			action: "repaintHistoryStrokes",
+			payload: penToolStrokes,
+		});
+	};
 
 	return (
 		<div className="h-screen w-full flex items-center">
@@ -69,7 +78,13 @@ function SidePanelApp() {
 								<RefreshCw className="w-4 h-4 mr-2" />
 								Repaint Highlights
 							</Button>
-							<Button variant="outline" className="w-full bg-transparent">
+							<Button
+								variant="outline"
+								className="w-full bg-transparent"
+								onClick={() => {
+									paintHistoryStrokes();
+								}}
+							>
 								<RefreshCw className="w-4 h-4 mr-2" />
 								Repaint Strokes
 							</Button>
