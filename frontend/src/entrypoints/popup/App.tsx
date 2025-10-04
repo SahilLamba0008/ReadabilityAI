@@ -36,7 +36,8 @@ export default function App() {
 	}
 
 	function handleLogin() {
-		alert("Login flow");
+		// alert("Login flow");
+		browser.tabs.create({ url: "/auth.html" });
 	}
 
 	function handleSignup() {

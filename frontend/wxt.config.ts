@@ -18,7 +18,7 @@ export default defineConfig({
 		permissions: ["storage"],
 		web_accessible_resources: [
 			{
-				resources: ["sidepanel.html"],
+				resources: ["sidepanel.html", "auth.html"],
 				matches: ["<all_urls>"],
 			},
 		],
