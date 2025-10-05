@@ -30,9 +30,6 @@ const useAuth = () => {
 				await browser.storage.local.set({
 					supabase_session: data.session,
 				});
-				browser.runtime.sendMessage({
-					action: "user_session_set",
-				});
 			} catch (err) {
 				console.error(err);
 				setError("Invalid email or password");
@@ -85,7 +82,7 @@ const useAuth = () => {
 				return;
 			}
 
-			// await browser.storage.local.remove("supabase_session");
+			await browser.storage.local.remove("supabase_session");
 			// dispatch(clearUser());
 		} catch (err) {
 			console.error(err);

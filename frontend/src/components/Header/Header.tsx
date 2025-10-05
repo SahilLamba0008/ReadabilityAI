@@ -9,6 +9,7 @@ import {
 	Heart,
 	Crown,
 	LogOut,
+	LogIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -74,10 +75,14 @@ const Header = () => {
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end" className={"w-48 bg-white"}>
-						<div className="px-2 py-1.5 text-sm font-medium">
-							{user?.email ?? "No user found"}
-						</div>
-						<DropdownMenuSeparator />
+						{user && (
+							<>
+								<div className="px-2 py-1.5 text-sm font-medium">
+									{user.email}
+								</div>
+								<DropdownMenuSeparator />
+							</>
+						)}
 						<DropdownMenuItem>
 							<HelpCircle className="w-4 h-4 mr-2" />
 							FAQ's
@@ -95,10 +100,19 @@ const Header = () => {
 							Buy Premium
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem onClick={signOut}>
-							<LogOut className="w-4 h-4 mr-2" />
-							Sign Out
-						</DropdownMenuItem>
+						{user ? (
+							<DropdownMenuItem onClick={signOut}>
+								<LogOut className="w-4 h-4 mr-2" />
+								Sign Out
+							</DropdownMenuItem>
+						) : (
+							<DropdownMenuItem
+								onClick={() => browser.tabs.create({ url: "/auth.html" })}
+							>
+								<LogIn className="w-4 h-4 mr-2" />
+								Sign In
+							</DropdownMenuItem>
+						)}
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>

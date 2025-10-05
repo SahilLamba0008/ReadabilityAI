@@ -73,10 +73,11 @@ function SidePanelApp() {
 		}
 
 		restoreSession();
-		
+
 		// sync updates and refresh token
 		const listener = (changes: any, areaName: string) => {
 			if (areaName === "local" && changes.supabase_session) {
+				console.log("changes detected");
 				const session = changes.supabase_session.newValue;
 
 				if (session) {
