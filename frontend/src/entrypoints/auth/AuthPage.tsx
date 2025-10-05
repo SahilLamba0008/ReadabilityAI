@@ -1,120 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { store } from "@/store/store";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import "~/assets/global.css";
-import { supabase } from "@/lib/supabase";
 import { EyeClosedIcon, EyeIcon } from "lucide-react";
+import useAuth from "@/hooks/useAuth";
+import "~/assets/global.css";
 
-function AuthPage() {
-	const [tab, setTab] = React.useState("login");
-	const [loginEmail, setLoginEmail] = React.useState("");
-	const [loginPassword, setLoginPassword] = React.useState("");
-	const [signupEmail, setSignupEmail] = React.useState("");
-	const [signupPassword, setSignupPassword] = React.useState("");
-	const [forgotEmail, setForgotEmail] = React.useState("");
-	const [successMessage, setSuccessMessage] = React.useState<string | null>(
-		null
-	);
-	const [error, setError] = React.useState<string | null>(null);
-	const [loading, setLoading] = React.useState(false);
-	const [showLoginPassword, setShowLoginPassword] = React.useState(false);
-	const [showSignupPassword, setShowSignupPassword] = React.useState(false);
+function AuthPageContent() {
+	const { signIn, signUp, resetPassword, loading, error } = useAuth();
+	const [tab, setTab] = useState("login");
+
+	const [loginEmail, setLoginEmail] = useState("");
+	const [loginPassword, setLoginPassword] = useState("");
+	const [signupEmail, setSignupEmail] = useState("");
+	const [signupPassword, setSignupPassword] = useState("");
+	const [forgotEmail, setForgotEmail] = useState("");
+
+	const [showLoginPassword, setShowLoginPassword] = useState(false);
+	const [showSignupPassword, setShowSignupPassword] = useState(false);
+	const [success, setSuccess] = useState<string | null>(null);
 
 	const handleLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setError(null);
-		setSuccessMessage(null);
-		setLoading(true);
-
-		const { data, error } = await supabase.auth.signInWithPassword({
-			email: loginEmail,
-			password: loginPassword,
-		});
-
-		setLoading(false);
-
-		if (error) {
-			setError(error.message);
-			return;
+		setSuccess(null);
+		await signIn(loginEmail, loginPassword);
+		if (!error) {
+			setSuccess("Login successful!");
 		}
-
-		// SUCCESS - redirect or close
-		console.log("Login successful!", data.user);
-		setSuccessMessage(
-			`Login successful! You can close this tab.
-			${data.user.email}`
-		);
 	};
 
 	const handleSignup = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setError(null);
-		setSuccessMessage(null);
-
-		if (signupPassword.length < 6) {
-			setError("Password must be at least 6 characters");
-			return;
+		setSuccess(null);
+		const data = await signUp(signupEmail, signupPassword);
+		if (data && !error) {
+			setSuccess(`Verification email sent to ${signupEmail}`);
+			setSignupEmail("");
+			setSignupPassword("");
 		}
-
-		setLoading(true);
-
-		const { data, error } = await supabase.auth.signUp({
-			email: signupEmail,
-			password: signupPassword,
-		});
-
-		setLoading(false);
-
-		if (error) {
-			setError(error.message);
-			return;
-		}
-
-		setSuccessMessage(
-			`Verification email sent to ${data.user?.email}. Please check your inbox.`
-		);
-		setSignupEmail("");
-		setSignupPassword("");
 	};
 
 	const handleForgotPassword = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setError(null);
-		setSuccessMessage(null);
-
-		if (!forgotEmail) {
-			setError("Please enter your email");
-			return;
-		}
-
-		setLoading(true);
-
-		const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-			redirectTo: `${window.location.origin}/reset-password`,
-		});
-
-		setLoading(false);
-
-		if (error) {
-			setError(error.message);
-			return;
-		}
-
-		setSuccessMessage("Password reset email sent! Check your inbox.");
-		setForgotEmail("");
-	};
-
-	const handleGoogleLogin = async () => {
-		setError(null);
-		const { error } = await supabase.auth.signInWithOAuth({
-			provider: "google",
-		});
-
-		if (error) {
-			setError(error.message);
+		setSuccess(null);
+		await resetPassword(forgotEmail);
+		if (!error) {
+			setSuccess("Password reset email sent!");
+			setForgotEmail("");
 		}
 	};
 
@@ -135,9 +71,9 @@ function AuthPage() {
 				</div>
 			)}
 
-			{successMessage && (
+			{success && (
 				<div className="text-green-600 text-sm text-center my-2 p-2 bg-green-50 rounded">
-					{successMessage}
+					{success}
 				</div>
 			)}
 
@@ -170,35 +106,30 @@ function AuthPage() {
 							<Button
 								type="button"
 								variant="ghost"
-								className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs"
+								className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1"
 								onClick={() => setShowLoginPassword((v) => !v)}
 								disabled={loading}
 							>
-								{showLoginPassword ? <EyeIcon /> : <EyeClosedIcon />}
+								{showLoginPassword ? (
+									<EyeIcon size={16} />
+								) : (
+									<EyeClosedIcon size={16} />
+								)}
 							</Button>
 						</div>
 					</div>
 					<Button type="submit" className="w-full" disabled={loading}>
 						{loading ? "Logging in..." : "Login"}
 					</Button>
-					<div className="flex justify-between mt-2">
-						<Button
-							variant="link"
-							type="button"
-							onClick={() => setTab("forgot")}
-							disabled={loading}
-						>
-							Forgot Password?
-						</Button>
-						<Button
-							variant="link"
-							type="button"
-							onClick={handleGoogleLogin}
-							disabled={loading}
-						>
-							Login with Google
-						</Button>
-					</div>
+					<Button
+						variant="link"
+						type="button"
+						onClick={() => setTab("forgot")}
+						disabled={loading}
+						className="w-full"
+					>
+						Forgot Password?
+					</Button>
 				</form>
 			</TabsContent>
 
@@ -222,7 +153,7 @@ function AuthPage() {
 							<Input
 								id="signup-password"
 								type={showSignupPassword ? "text" : "password"}
-								placeholder="Password (min 6 characters)"
+								placeholder="Min 6 characters"
 								value={signupPassword}
 								onChange={(e) => setSignupPassword(e.target.value)}
 								required
@@ -231,11 +162,15 @@ function AuthPage() {
 							<Button
 								type="button"
 								variant="ghost"
-								className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs"
+								className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1"
 								onClick={() => setShowSignupPassword((v) => !v)}
 								disabled={loading}
 							>
-								{showSignupPassword ? <EyeIcon /> : <EyeClosedIcon />}
+								{showSignupPassword ? (
+									<EyeIcon size={16} />
+								) : (
+									<EyeClosedIcon size={16} />
+								)}
 							</Button>
 						</div>
 					</div>
@@ -267,12 +202,21 @@ function AuthPage() {
 						type="button"
 						onClick={() => setTab("login")}
 						disabled={loading}
+						className="w-full"
 					>
 						Back to Login
 					</Button>
 				</form>
 			</TabsContent>
 		</Tabs>
+	);
+}
+
+function AuthPage() {
+	return (
+		<Provider store={store}>
+			<AuthPageContent />
+		</Provider>
 	);
 }
 

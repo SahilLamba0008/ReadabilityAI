@@ -15,7 +15,7 @@ export default defineConfig({
 		},
 	}),
 	manifest: {
-		permissions: ["storage"],
+		permissions: ["storage", "tabs", "scripting", "activeTab"],
 		web_accessible_resources: [
 			{
 				resources: ["sidepanel.html", "auth.html"],
