@@ -18,8 +18,13 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import useAuth from "@/hooks/useAuth";
+import { useSelector } from "react-redux";
 
 const Header = () => {
+	const user = useSelector((state: any) => state.auth.user);
+	const { signOut } = useAuth();
+
 	return (
 		<div
 			className={
@@ -69,7 +74,9 @@ const Header = () => {
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end" className={"w-48 bg-white"}>
-						<div className="px-2 py-1.5 text-sm font-medium">John Doe</div>
+						<div className="px-2 py-1.5 text-sm font-medium">
+							{user?.email ?? "No user found"}
+						</div>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
 							<HelpCircle className="w-4 h-4 mr-2" />
@@ -88,7 +95,7 @@ const Header = () => {
 							Buy Premium
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
+						<DropdownMenuItem onClick={signOut}>
 							<LogOut className="w-4 h-4 mr-2" />
 							Sign Out
 						</DropdownMenuItem>

@@ -21,7 +21,6 @@ import {
 	Smile,
 	RefreshCw,
 } from "lucide-react";
-
 export default function App() {
 	const [isDarkMode, setIsDarkMode] = useState(false);
 	const [status, setStatus] = useState<"enabled" | "disabled">("enabled");

@@ -16,6 +16,8 @@ import { Provider, useDispatch, useSelector } from "react-redux";
 import { persistorStore, store } from "@/store/store";
 import { togglePanel } from "@/store/slices/sidepanelSlice";
 import { PersistGate } from "redux-persist/integration/react";
+import { clearUser, setUser } from "@/store/slices/authSlice";
+import { supabase } from "@/lib/supabase";
 
 function SidePanelApp() {
 	const dispatch = useDispatch();
@@ -40,6 +42,60 @@ function SidePanelApp() {
 			payload: penToolStrokes,
 		});
 	};
+
+	useEffect(() => {
+		// sync locally set user session to each active side panel, as each tab is independent
+		async function restoreSession() {
+			const { supabase_session } = await browser.storage.local.get(
+				"supabase_session"
+			);
+
+			if (supabase_session) {
+				await supabase.auth.setSession({
+					access_token: supabase_session.access_token,
+					refresh_token: supabase_session.refresh_token,
+				});
+
+				// Get current user and update Redux
+				const {
+					data: { user },
+				} = await supabase.auth.getUser();
+				// helps syncing store of each individual tab as we are using session storage
+				if (user) {
+					dispatch(
+						setUser({
+							id: user.id,
+							email: user.email || "email is undefined",
+						})
+					);
+				}
+			}
+		}
+
+		restoreSession();
+		
+		// sync updates and refresh token
+		const listener = (changes: any, areaName: string) => {
+			if (areaName === "local" && changes.supabase_session) {
+				const session = changes.supabase_session.newValue;
+
+				if (session) {
+					supabase.auth.setSession({
+						access_token: session.access_token,
+						refresh_token: session.refresh_token,
+					});
+					dispatch(setUser(session.user));
+				} else {
+					dispatch(clearUser());
+				}
+			}
+		};
+
+		browser.storage.onChanged.addListener(listener);
+		return () => {
+			browser.storage.onChanged.removeListener(listener);
+		};
+	}, []);
 
 	return (
 		<div className="h-screen w-full flex items-center">

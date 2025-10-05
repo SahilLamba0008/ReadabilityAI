@@ -26,12 +26,13 @@ const useAuth = () => {
 					return;
 				}
 
-				dispatch(
-					setUser({
-						id: data.user.id,
-						email: data.user.email || "email is undefined",
-					})
-				);
+				// Save session to browser storage - to sync across extension parts as each page has its own context
+				await browser.storage.local.set({
+					supabase_session: data.session,
+				});
+				browser.runtime.sendMessage({
+					action: "user_session_set",
+				});
 			} catch (err) {
 				console.error(err);
 				setError("Invalid email or password");
@@ -42,38 +43,35 @@ const useAuth = () => {
 		[dispatch]
 	);
 
-	const signUp = useCallback(
-		async (email: string, password: string) => {
-			try {
-				setLoading(true);
-				setError(null);
+	const signUp = useCallback(async (email: string, password: string) => {
+		try {
+			setLoading(true);
+			setError(null);
 
-				if (password.length < 6) {
-					setError("Password must be at least 6 characters");
-					return;
-				}
-
-				const { data, error: authError } = await supabase.auth.signUp({
-					email,
-					password,
-				});
-
-				if (authError) {
-					setError(authError.message);
-					return;
-				}
-
-				// Don't dispatch user yet - they need to verify email first
-				return data;
-			} catch (err) {
-				console.error(err);
-				setError("Error signing up");
-			} finally {
-				setLoading(false);
+			if (password.length < 6) {
+				setError("Password must be at least 6 characters");
+				return;
 			}
-		},
-		[dispatch]
-	);
+
+			const { data, error: authError } = await supabase.auth.signUp({
+				email,
+				password,
+			});
+
+			if (authError) {
+				setError(authError.message);
+				return;
+			}
+
+			// Don't dispatch user yet - they need to verify email first
+			return data;
+		} catch (err) {
+			console.error(err);
+			setError("Error signing up");
+		} finally {
+			setLoading(false);
+		}
+	}, []);
 
 	const signOut = useCallback(async () => {
 		try {
@@ -87,7 +85,8 @@ const useAuth = () => {
 				return;
 			}
 
-			dispatch(clearUser());
+			// await browser.storage.local.remove("supabase_session");
+			// dispatch(clearUser());
 		} catch (err) {
 			console.error(err);
 			setError("Error logging out");

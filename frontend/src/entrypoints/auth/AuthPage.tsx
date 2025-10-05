@@ -130,6 +130,18 @@ function AuthPageContent() {
 					>
 						Forgot Password?
 					</Button>
+					<Button
+						variant="link"
+						type="button"
+						onClick={() => {
+							setLoginEmail(import.meta.env.WXT_USER_EMAIL);
+							setLoginPassword(import.meta.env.WXT_USER_PASS);
+						}}
+						disabled={loading}
+						className="w-full"
+					>
+						Set Credentails
+					</Button>
 				</form>
 			</TabsContent>
 
