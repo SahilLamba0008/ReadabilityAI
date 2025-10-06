@@ -96,7 +96,7 @@ export default defineContentScript({
 
 				if (message.action === "toggleSidepanel" && sidePanelIframe) {
 					sidePanelIframe.style.right =
-						message.payload?.isOpen === false ? "-315px" : "0px";
+						message.payload?.isOpen === false ? "-350px" : "0px";
 				}
 
 				// if (message.action === "get_url") {

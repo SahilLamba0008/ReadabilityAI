@@ -21,7 +21,7 @@ import { supabase } from "@/lib/supabase";
 
 function SidePanelApp() {
 	const dispatch = useDispatch();
-	const isOpen = useSelector((state: any) => state.sidePanel.isOpen);
+	const [isOpen, setIsOpen] = useState<boolean>(true);
 	const penToolStrokes = useSelector((state: any) => state.pen.penStrokes);
 
 	const handleClick = () => {
@@ -29,6 +29,30 @@ function SidePanelApp() {
 	};
 
 	useEffect(() => {
+		async function syncState() {
+			const { sidepanel_open } = await browser.storage.local.get(
+				"sidepanel_open"
+			);
+			const actualState = sidepanel_open ?? true;
+			console.log("actual state :", actualState);
+			setIsOpen(actualState);
+		}
+
+		syncState();
+
+		const listener = (changes: any) => {
+			if (changes.sidepanel_open) {
+				const newState = changes.sidepanel_open.newValue ?? true;
+				setIsOpen(newState);
+			}
+		};
+
+		browser.storage.onChanged.addListener(listener);
+		return () => browser.storage.onChanged.removeListener(listener);
+	}, []);
+
+	useEffect(() => {
+		console.log("isopen value :", isOpen);
 		browser.runtime.sendMessage({
 			action: "toggleSidepanel",
 			payload: { isOpen: isOpen },
@@ -100,7 +124,7 @@ function SidePanelApp() {
 
 	return (
 		<div className="h-screen w-full flex items-center">
-			<Button
+			{/* <Button
 				className={`h-full w-fit text-primary rounded-none bg-white/50 hover:bg-black/30  transition-all ease-in-out duration-100`}
 				id="close-button"
 				variant="ghost"
@@ -112,9 +136,9 @@ function SidePanelApp() {
 						isOpen ? "rotate-0" : "rotate-180"
 					}`}
 				/>
-			</Button>
+			</Button> */}
 
-			<div className="h-full w-[calc(100%-5px)] flex flex-col justify-between ml-auto border-border border-l-1">
+			<div className="h-full w-full flex flex-col justify-between ml-auto border-border border-l-1">
 				<Header />
 
 				<div className="flex-1 overflow-y-auto custom-scrollbar">

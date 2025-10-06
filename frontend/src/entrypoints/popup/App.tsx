@@ -21,26 +21,42 @@ import {
 	Smile,
 	RefreshCw,
 	LogOut,
+	HelpCircle,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import useAuth from "@/hooks/useAuth";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
 
 let sessionCache: any = null;
 let cacheInitialized = false;
-
-// Initialize cache immediately
 if (!cacheInitialized) {
-	browser.storage.local.get("supabase_session").then(({ supabase_session }) => {
-		sessionCache = supabase_session;
-		cacheInitialized = true;
-	});
+	browser.storage.local
+		.get(["supabase_session", "sidepanel_open"])
+		.then(({ supabase_session }) => {
+			sessionCache = supabase_session;
+			cacheInitialized = true;
+		});
 }
+
+let sidepanelCache = true;
+browser.storage.local.get("sidepanel_open").then(({ sidepanel_open }) => {
+	sidepanelCache = sidepanel_open ?? true;
+});
 
 export default function App() {
 	const [isDarkMode, setIsDarkMode] = useState(false);
 	const [status, setStatus] = useState<"enabled" | "disabled">("enabled");
 	const [user, setUser] = useState<string | undefined>(
 		sessionCache?.user?.email
+	);
+	const [toggleSidepanel, setToggleSidepanel] = useState<boolean>(
+		sidepanelCache ?? true
 	);
 	const { signOut } = useAuth();
 
@@ -106,6 +122,31 @@ export default function App() {
 			browser.storage.onChanged.removeListener(listener);
 		};
 	}, []);
+
+	useEffect(() => {
+		async function syncState() {
+			const { sidepanel_open } = await browser.storage.local.get(
+				"sidepanel_open"
+			);
+			const actualState = sidepanel_open ?? true;
+			sidepanelCache = actualState;
+			setToggleSidepanel(actualState);
+		}
+
+		syncState();
+
+		const listener = (changes: any) => {
+			if (changes.sidepanel_open) {
+				const newState = changes.sidepanel_open.newValue ?? true;
+				sidepanelCache = newState;
+				setToggleSidepanel(newState);
+			}
+		};
+
+		browser.storage.onChanged.addListener(listener);
+		return () => browser.storage.onChanged.removeListener(listener);
+	}, []);
+
 	return (
 		<main
 			className={`w-[350px] h-[400px] overflow-y-scroll ${
@@ -157,18 +198,38 @@ export default function App() {
 							<Moon className="w-4 h-4" />
 						)}
 					</Button> */}
-					<Button
-						variant="ghost"
-						size="sm"
-						className={`w-8 h-8 p-0 ${
-							isDarkMode
-								? "hover:bg-gray-700 text-gray-300 hover:text-gray-100"
-								: "hover:bg-accent"
-						}`}
-						aria-label="Settings"
-					>
-						<Settings className="w-4 h-4" />
-					</Button>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button
+								variant="ghost"
+								size="sm"
+								className={`w-8 h-8 p-0 ${
+									isDarkMode
+										? "hover:bg-gray-700 text-gray-300 hover:text-gray-100"
+										: "hover:bg-accent"
+								}`}
+								aria-label="Settings"
+							>
+								<Settings className="w-4 h-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className={"w-48 bg-white"}>
+							<DropdownMenuItem>
+								Enable Sidepanel
+								<Switch
+									checked={toggleSidepanel}
+									onCheckedChange={async (checked) => {
+										sidepanelCache = checked;
+										setToggleSidepanel(checked);
+
+										await browser.storage.local.set({
+											sidepanel_open: checked,
+										});
+									}}
+								/>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 					{/* <Button
 						variant="ghost"
 						size="sm"
