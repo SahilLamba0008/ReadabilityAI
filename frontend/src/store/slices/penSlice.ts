@@ -3,15 +3,19 @@ import { penColors } from "@/lib/utils";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface PenState {
+	userId: string;
 	color: string;
 	penStrokes: Stroke[];
 	redoStack: Stroke[];
+	pageUrl: string;
 }
 
 const initialState: PenState = {
+	userId: "",
 	color: penColors[0],
 	penStrokes: [],
 	redoStack: [],
+	pageUrl: "",
 };
 
 const penSlice = createSlice({

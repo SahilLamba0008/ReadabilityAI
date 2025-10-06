@@ -15,9 +15,12 @@ export interface PenToolOptions {
 	lineWidth?: number;
 	lineCap?: CanvasLineCap;
 	zIndex?: number;
+	// userId?: string;
 }
 
 export type Stroke = {
+	pageUrl: string;
+	userId?: string;
 	points: { x: number; y: number }[];
 	color: string;
 };
@@ -27,11 +30,12 @@ export type Highlight = {
 	text: string;
 	color: string;
 	range: Range;
-	page: string;
+	pageUrl: string;
+	userId?: string;
 	title?: string;
 };
 
 export type StoreHighlight = Pick<
 	Highlight,
-	"id" | "text" | "color" | "title" | "page"
+	"id" | "text" | "color" | "title" | "pageUrl" | "userId"
 >;

@@ -1,4 +1,5 @@
 import { Highlight, StoreHighlight } from "@/lib/types";
+import { getUserId } from "@/lib/utils";
 
 export class HighlighterToolService {
 	private enabled = false;
@@ -30,7 +31,7 @@ export class HighlighterToolService {
 		this.highlightSelection();
 	};
 
-	private highlightSelection = (highlight?: Highlight) => {
+	private highlightSelection = async (highlight?: Highlight) => {
 		const selection = window.getSelection();
 		if (selection?.isCollapsed) return; // In case of highlight params, selection would be undefined
 
@@ -98,21 +99,24 @@ export class HighlighterToolService {
 				nodeRange.surroundContents(highlight);
 			});
 		}
-
+		const userId = await getUserId();
 		const newHighlight: Highlight = {
 			id: highlightId,
 			text,
 			color,
 			range,
-			page: window.location.href,
+			pageUrl: window.location.href,
+			userId: userId ?? "",
 		};
+		console.log("user id high :", newHighlight.userId);
 		this.highlights.push(newHighlight);
 
 		const storeHighlight: StoreHighlight = {
 			id: highlightId,
 			color,
 			text,
-			page: window.location.href,
+			pageUrl: window.location.href,
+			userId: userId ?? "",
 		};
 
 		browser.runtime.sendMessage({

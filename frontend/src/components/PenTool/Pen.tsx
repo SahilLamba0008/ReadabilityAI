@@ -14,7 +14,6 @@ import { addPenStroke, updatePenColor } from "@/store/slices/penSlice";
 import { store } from "@/store/store";
 
 let penTool: PenToolCanvas | null = null;
-
 export const enablePenTool = () => {
 	if (!penTool) {
 		penTool = new PenToolCanvas({ color: "red" });

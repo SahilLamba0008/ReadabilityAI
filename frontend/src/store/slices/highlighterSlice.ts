@@ -3,17 +3,21 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Highlight } from "@/lib/types";
 
 interface HighlighterState {
+	userId: string;
 	highlightCount: number;
 	color: string;
 	highlights: Highlight[];
 	redoStack: Highlight[];
+	pageUrl: string;
 }
 
 const initialState: HighlighterState = {
+	userId: "",
 	highlightCount: 1,
 	color: highlighterColors[0],
 	highlights: [],
 	redoStack: [],
+	pageUrl: "",
 };
 
 const highlighterSlice = createSlice({

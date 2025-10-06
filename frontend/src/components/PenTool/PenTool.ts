@@ -1,4 +1,5 @@
 import { PenToolOptions, Stroke } from "@/lib/types";
+import { getUserId } from "@/lib/utils";
 
 export class PenToolCanvas {
 	private canvas: HTMLCanvasElement | null = null;
@@ -13,6 +14,7 @@ export class PenToolCanvas {
 	private listener:
 		| ((message: any, sender: any, sendResponse: any) => void)
 		| null = null;
+	private pageUrl: string;
 
 	constructor(options: PenToolOptions = {}) {
 		this.options = {
@@ -21,6 +23,7 @@ export class PenToolCanvas {
 			lineCap: options.lineCap ?? "round",
 			zIndex: options.zIndex ?? 9998,
 		};
+		this.pageUrl = window.location.href;
 	}
 
 	public enable() {
@@ -94,8 +97,8 @@ export class PenToolCanvas {
 		if (!this.ctx) return;
 		console.log("Mouse down at", e.clientX, e.clientY + window.scrollY);
 		this.drawing = true;
-
 		this.currentStroke = {
+			pageUrl: this.pageUrl,
 			points: [{ x: e.clientX, y: e.clientY + window.scrollY }],
 			color: this.options.color!,
 		};
@@ -113,13 +116,19 @@ export class PenToolCanvas {
 		this.redraw();
 	};
 
-	private onMouseUp = (e: MouseEvent) => {
+	private onMouseUp = async (e: MouseEvent) => {
 		if (this.currentStroke) {
 			this.strokes.push(this.currentStroke);
+
+			const userId = await getUserId();
+			const updatedCurrentStroke = {
+				...this.currentStroke,
+				userId: userId,
+			};
 			browser.runtime.sendMessage({
 				tool: "pen",
 				type: "add_stroke",
-				payload: this.currentStroke,
+				payload: { stroke: updatedCurrentStroke },
 			});
 			this.currentStroke = null;
 			this.redoStack = [];

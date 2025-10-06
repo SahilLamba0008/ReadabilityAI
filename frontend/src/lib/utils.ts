@@ -13,3 +13,10 @@ export const highlighterColors = [
 ];
 
 export const penColors = ["red", "blue", "yellow", "green"];
+
+export const getUserId = async (): Promise<string | null> => {
+	const { supabase_session } = await browser.storage.local.get(
+		"supabase_session"
+	);
+	return supabase_session?.user?.id || null;
+};
