@@ -99,24 +99,24 @@ export class HighlighterToolService {
 				nodeRange.surroundContents(highlight);
 			});
 		}
-		const userId = await getUserId();
+		const userId = (await getUserId()) ?? "";
+		const pageUrl = window.location.href;
 		const newHighlight: Highlight = {
 			id: highlightId,
 			text,
 			color,
 			range,
-			pageUrl: window.location.href,
-			userId: userId ?? "",
+			pageUrl: pageUrl,
+			userId: userId,
 		};
-		console.log("user id high :", newHighlight.userId);
 		this.highlights.push(newHighlight);
 
 		const storeHighlight: StoreHighlight = {
 			id: highlightId,
 			color,
 			text,
-			pageUrl: window.location.href,
-			userId: userId ?? "",
+			pageUrl: pageUrl,
+			userId: userId,
 		};
 
 		browser.runtime.sendMessage({
