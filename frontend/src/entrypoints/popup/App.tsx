@@ -20,10 +20,29 @@ import {
 	List,
 	Smile,
 	RefreshCw,
+	LogOut,
 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import useAuth from "@/hooks/useAuth";
+
+let sessionCache: any = null;
+let cacheInitialized = false;
+
+// Initialize cache immediately
+if (!cacheInitialized) {
+	browser.storage.local.get("supabase_session").then(({ supabase_session }) => {
+		sessionCache = supabase_session;
+		cacheInitialized = true;
+	});
+}
+
 export default function App() {
 	const [isDarkMode, setIsDarkMode] = useState(false);
 	const [status, setStatus] = useState<"enabled" | "disabled">("enabled");
+	const [user, setUser] = useState<string | undefined>(
+		sessionCache?.user?.email
+	);
+	const { signOut } = useAuth();
 
 	function handleSave() {
 		// Hook into extension state persistence
@@ -43,6 +62,50 @@ export default function App() {
 		alert("Signup flow");
 	}
 
+	useEffect(() => {
+		async function restoreSession() {
+			const { supabase_session } = await browser.storage.local.get(
+				"supabase_session"
+			);
+
+			if (supabase_session) {
+				sessionCache = supabase_session; // Update cache
+				await supabase.auth.setSession({
+					access_token: supabase_session.access_token,
+					refresh_token: supabase_session.refresh_token,
+				});
+				setUser(supabase_session.user.email);
+			} else {
+				sessionCache = null;
+				setUser(undefined);
+			}
+		}
+
+		restoreSession();
+
+		const listener = (changes: any, areaName: string) => {
+			if (areaName === "local" && changes.supabase_session) {
+				const session = changes.supabase_session.newValue;
+				sessionCache = session; // Update cache
+
+				if (session) {
+					supabase.auth.setSession({
+						access_token: session.access_token,
+						refresh_token: session.refresh_token,
+					});
+					setUser(session.user.email);
+				} else {
+					setUser(undefined);
+				}
+			}
+		};
+
+		browser.storage.onChanged.addListener(listener);
+
+		return () => {
+			browser.storage.onChanged.removeListener(listener);
+		};
+	}, []);
 	return (
 		<main
 			className={`w-[350px] h-[400px] overflow-y-scroll ${
@@ -77,7 +140,7 @@ export default function App() {
 				</div>
 
 				<div className="flex items-center gap-1">
-					<Button
+					{/* <Button
 						variant="ghost"
 						size="sm"
 						onClick={() => setIsDarkMode(!isDarkMode)}
@@ -93,7 +156,7 @@ export default function App() {
 						) : (
 							<Moon className="w-4 h-4" />
 						)}
-					</Button>
+					</Button> */}
 					<Button
 						variant="ghost"
 						size="sm"
@@ -106,25 +169,27 @@ export default function App() {
 					>
 						<Settings className="w-4 h-4" />
 					</Button>
-					<Button
+					{/* <Button
 						variant="ghost"
 						size="sm"
 						onClick={() =>
 							setStatus(status === "enabled" ? "disabled" : "enabled")
 						}
-						className={`w-8 h-8 p-0 border-2 ${
+						className={`w-7 h-7 p-0 border-2 ${
 							status === "enabled"
-								? "bg-green-500 border-green-200 hover:bg-green-600"
-								: "bg-red-500 border-red-200 hover:bg-red-600"
+								? "bg-yellow-500 border-yellow-200 hover:bg-yellow-600"
+								: "bg-gray-500 border-gray-200 hover:bg-gray-600 opacity-60"
 						}`}
 						aria-label="Toggle extension status"
 					>
 						<Power
 							className={`w-4 h-4 ${
-								status === "enabled" ? "text-emerald-300" : "text-red-200"
+								status === "enabled"
+									? "text-yellow-700"
+									: "text-white opacity-90"
 							}`}
 						/>
-					</Button>
+					</Button> */}
 				</div>
 			</header>
 
@@ -180,51 +245,83 @@ export default function App() {
 				</Card> */}
 
 				{/* 2) Auth Card (Login / Sign up) */}
-				<Card
-					className={`${
-						isDarkMode ? "bg-gray-800 border-gray-700" : "bg-card border-border"
-					} p-3`}
-				>
-					<h3
-						className={`text-sm font-semibold ${
-							isDarkMode ? "text-gray-200" : "text-foreground"
-						}`}
+				{user ? (
+					<Card
+						className={`${
+							isDarkMode
+								? "bg-gray-800 border-gray-700"
+								: "bg-card border-border"
+						} p-3 flex justify-center items-center`}
 					>
-						Get started
-					</h3>
-					<p
-						className={`text-xs mt-1 ${
-							isDarkMode ? "text-gray-400" : "text-muted-foreground"
-						}`}
-					>
-						Create an account or sign in to sync highlights, access summaries,
-						and manage preferences.
-					</p>
-
-					<div className="mt-3 grid grid-cols-2 gap-2">
+						<h6
+							className={`font-semibold ${
+								isDarkMode ? "text-gray-200" : "text-foreground"
+							}`}
+						>
+							Logged In Successfully
+						</h6>
+						<p className="-mt-3 bg-green-700 rounded-full px-2 italic text-green-200 ring-3 shadow-2xl">
+							{user}
+						</p>
 						<Button
 							variant="outline"
-							className={`${
-								isDarkMode
-									? "bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200"
-									: ""
-							} h-9`}
-							onClick={handleLogin}
+							className="bg-transparent -mt-3"
+							size={"sm"}
+							onClick={signOut}
 						>
-							Log in
+							<LogOut />
+							Sign Out
 						</Button>
-						<Button
-							className={`h-9 ${
-								isDarkMode
-									? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-									: "bg-gradient-to-r from-slate-600 to-slate-800 hover:from-slate-700 hover:to-slate-900"
+					</Card>
+				) : (
+					<Card
+						className={`${
+							isDarkMode
+								? "bg-gray-800 border-gray-700"
+								: "bg-card border-border"
+						} p-3`}
+					>
+						<h3
+							className={`text-sm font-semibold ${
+								isDarkMode ? "text-gray-200" : "text-foreground"
 							}`}
-							onClick={handleSignup}
 						>
-							Sign up
-						</Button>
-					</div>
-				</Card>
+							Get started
+						</h3>
+						<p
+							className={`text-xs mt-1 ${
+								isDarkMode ? "text-gray-400" : "text-muted-foreground"
+							}`}
+						>
+							Create an account or sign in to sync highlights, access summaries,
+							and manage preferences.
+						</p>
+
+						<div className="mt-3 grid grid-cols-2 gap-2">
+							<Button
+								variant="outline"
+								className={`${
+									isDarkMode
+										? "bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200"
+										: ""
+								} h-9`}
+								onClick={handleLogin}
+							>
+								Log in
+							</Button>
+							<Button
+								className={`h-9 ${
+									isDarkMode
+										? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+										: "bg-gradient-to-r from-slate-600 to-slate-800 hover:from-slate-700 hover:to-slate-900"
+								}`}
+								onClick={handleSignup}
+							>
+								Sign up
+							</Button>
+						</div>
+					</Card>
+				)}
 
 				{/* 3) Premium Upsell (no 'Premium Access' in header; regular user conversion) */}
 				<Card

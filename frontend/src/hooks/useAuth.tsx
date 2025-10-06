@@ -1,44 +1,38 @@
 import { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { clearUser, setUser } from "@/store/slices/authSlice";
 import { supabase } from "@/lib/supabase";
 
 const useAuth = () => {
-	const dispatch = useDispatch();
-	const { user, authenticated } = useSelector((state: any) => state.auth);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const signIn = useCallback(
-		async (email: string, password: string) => {
-			try {
-				setLoading(true);
-				setError(null);
+	const signIn = useCallback(async (email: string, password: string) => {
+		try {
+			setLoading(true);
+			setError(null);
 
-				const { data, error: authError } =
-					await supabase.auth.signInWithPassword({
-						email,
-						password,
-					});
-
-				if (authError) {
-					setError(authError.message);
-					return;
+			const { data, error: authError } = await supabase.auth.signInWithPassword(
+				{
+					email,
+					password,
 				}
+			);
 
-				// Save session to browser storage - to sync across extension parts as each page has its own context
-				await browser.storage.local.set({
-					supabase_session: data.session,
-				});
-			} catch (err) {
-				console.error(err);
-				setError("Invalid email or password");
-			} finally {
-				setLoading(false);
+			if (authError) {
+				setError(authError.message);
+				return;
 			}
-		},
-		[dispatch]
-	);
+
+			// Save session to browser storage - to sync across extension parts as each page has its own context
+			await browser.storage.local.set({
+				supabase_session: data.session,
+			});
+		} catch (err) {
+			console.error(err);
+			setError("Invalid email or password");
+		} finally {
+			setLoading(false);
+		}
+	}, []);
 
 	const signUp = useCallback(async (email: string, password: string) => {
 		try {
@@ -90,7 +84,7 @@ const useAuth = () => {
 		} finally {
 			setLoading(false);
 		}
-	}, [dispatch]);
+	}, []);
 
 	const resetPassword = useCallback(async (email: string) => {
 		try {
@@ -121,9 +115,7 @@ const useAuth = () => {
 		signUp,
 		signOut,
 		resetPassword,
-		user,
 		loading,
-		authenticated,
 		error,
 	};
 };
