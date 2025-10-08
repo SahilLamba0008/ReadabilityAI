@@ -122,13 +122,13 @@ const Highlights = () => {
 					</div>
 				</div>
 				<div className="space-y-3">
-					{storedHighlights.map((highlight: Highlight) => {
+					{storedHighlights.map((highlight: Highlight, idx) => {
 						// if (highlight === null) {
 						// 	return;
 						// }
 						return (
 							<div
-								key={highlight.id}
+								key={idx}
 								className={`p-3 border rounded-lg transition-colors relative group border-border hover:bg-accent/50`}
 							>
 								{/* Header with Title and Menu */}
@@ -190,7 +190,7 @@ const Highlights = () => {
 
 								{/* Page Info */}
 								<p className={`text-xs mb-2 ml-5 text-muted-foreground`}>
-									{highlight.page}
+									{highlight.pageUrl}
 								</p>
 
 								{/* Content */}

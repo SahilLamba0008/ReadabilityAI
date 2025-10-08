@@ -128,7 +128,7 @@ export class PenToolCanvas {
 			browser.runtime.sendMessage({
 				tool: "pen",
 				type: "add_stroke",
-				payload: { stroke: updatedCurrentStroke },
+				payload: updatedCurrentStroke,
 			});
 			this.currentStroke = null;
 			this.redoStack = [];
@@ -160,7 +160,13 @@ export class PenToolCanvas {
 	}
 
 	private drawStroke(stroke: Stroke) {
-		if (!this.ctx || stroke.points.length === 0) return;
+		if (!stroke.points) {
+			console.error("most likely the object is having a nested stroke");
+			return;
+		}
+		if (!this.ctx || stroke.points.length === 0) {
+			return;
+		}
 
 		this.ctx.strokeStyle = stroke.color;
 		this.ctx.beginPath();
